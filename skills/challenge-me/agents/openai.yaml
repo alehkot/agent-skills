@@ -1,0 +1,4 @@
+interface:
+  display_name: "Challenge Me"
+  short_description: "Hard questions that resolve ambiguity and log decisions"
+  default_prompt: "Use $challenge-me to challenge my thinking, keep a decision log, and ask until I stop or the overall picture is clear."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Evals"
+  short_description: "Design and review agent evals with an evidence rubric"
+  default_prompt: "Use $agent-evals to design or review this AI-agent evaluation with a proportionate rubric, checked evidence, and separate execution status."

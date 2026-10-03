@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Loop"
+  short_description: "Review and repair until the severity gate passes"
+  default_prompt: "Use $review-loop to review and fix the completed work until no medium-or-higher issues remain, within 10 passes and 30 minutes."

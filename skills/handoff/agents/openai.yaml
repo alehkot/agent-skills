@@ -1,0 +1,4 @@
+interface:
+  display_name: "Handoff"
+  short_description: "Fresh-context execution prompts with pitfalls and next steps"
+  default_prompt: "Use $handoff to give me a paste-ready prompt for another agent to continue this work with fresh context."
