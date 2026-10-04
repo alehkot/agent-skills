@@ -86,13 +86,18 @@ Severity threshold: <effective threshold and definitions>
 Time available: <remaining allowance; stop before it expires>
 
 Return findings with a stable description, severity, location, consequence,
-evidence, and required correction. Separate demonstrated defects from unresolved
+the requirement or established behavior at issue, evidence, and required correction.
+Separate demonstrated defects from unresolved
 risks. Report covered scope and missing evidence. If there are no actionable
 findings, say so; do not invent issues to satisfy the review request.
 ```
 
 The main agent independently reconciles the findings. Closure of a confirmed
 issue requires a verified repair or evidence that disproves the finding.
+Distinguish a defect in the artifact from a mistaken requirement or missing
+reviewer context. Resolve source conflicts against the task's actual authority;
+ask about an unresolved policy choice rather than inventing one. Use a small
+reproducer or source counterexample when it can decide a disputed factual claim.
 An unresolved relevant risk cannot be erased by renaming it an assumption.
 When the original reviewer is unavailable, a self-review may satisfy this
 skill's gate if equally complete, but never label it independent or fresh-context.

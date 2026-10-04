@@ -51,11 +51,13 @@ source obligations. Protect unrelated changes.
 3. Review the whole scope for requirements, correctness, relevant failure paths,
    source fidelity, and regressions. Select relevant concerns rather than
    inventing absent features or demanding findings. Require location, impact,
-   and evidence for each issue. Missing necessary evidence is a limitation,
-   not a clean review.
+   and evidence tied to a violated requirement or established behavior for each
+   issue. Missing necessary evidence is a limitation, not a clean review.
 4. Verify findings against the artifacts. Record confirmed issues, demonstrated
    false positives, and unresolved claims separately. Maintain stable finding
-   IDs so a repeated unresolved issue cannot disappear as "nothing new."
+   IDs so a repeated unresolved issue cannot disappear as "nothing new." If the
+   reviewer relied on incomplete or incorrect task context, correct the brief
+   and reassess the finding before changing the artifact.
 5. Fix confirmed findings at or above the threshold within the authorized
    scope, then run appropriate verification. Report lower-severity suggestions
    without default polishing loops. New product decisions or external actions

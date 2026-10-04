@@ -18,6 +18,24 @@ instructions, memory, repository reads and prior transcripts. Inline any task
 artifacts unavailable through tools for both arms. Reset independent trials, while
 preserving state deliberately within a persistent-session test.
 
+## Observe the workflow being claimed
+
+For tool-using workflows, use a disposable copy of representative artifacts with
+the required tools and task permissions available. Record the starting state,
+allowed actions, and resulting artifacts or receipts that decide success. Let
+the agent discover relevant facts; a prompt that supplies the defect tests a
+different capability from finding it in files or tool results.
+
+Grade actions from the execution trace and resulting state. Grade conversational
+claims from the dialogue, also checking a decision log when maintaining one is
+part of the job. A supplied checkpoint can test the next decision but does not
+prove that the agent performed the preceding work. Distinguish an unavailable
+tool or denied operation from a workflow the agent chose not to perform.
+
+Test skill selection separately from execution quality when automatic discovery
+matters. Loading a skill does not prove useful behavior; a correct answer does
+not prove the intended skill was selected. Keep these observations separate.
+
 ## Plan counts and failures
 
 Use the planned inventory, not surviving result directories, to determine
