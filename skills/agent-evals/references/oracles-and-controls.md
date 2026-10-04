@@ -80,6 +80,18 @@ Resolve disagreements from that evidence; send unresolved policy choices to the
 user. If this check is unavailable, keep the references provisional rather than
 treating a second favorable score as verification.
 
+For pass/fail graders, report missed defects and false rejections of valid answers
+against adjudicated labels, with each denominator and the label mix. Overall
+agreement can hide a grader that accepts everything when defects are rare. Keep
+unclear references and unassessable judgments separate from confirmed errors.
+Set tolerable error rates from the decision's consequences; do not invent a
+universal agreement threshold or extrapolate from a small set without evidence.
+
+For pairwise judgments, hide irrelevant candidate identity and check swapped
+presentation orders. Retain both judgments and use a predeclared rule for order
+disagreement; do not select the favorable ordering. A reversal shows instability,
+not equal answer quality or, by itself, a proven causal explanation.
+
 Preserve typed labels/probabilities without inventing rationales. Check a text
 judge's cited evidence against the actual answer. Judge agreement and confidence
 do not establish truth; confidence thresholds require relevant validation. Compare

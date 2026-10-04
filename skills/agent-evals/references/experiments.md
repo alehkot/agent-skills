@@ -79,8 +79,16 @@ attempts. Keep the task population, k, trial independence assumptions and aggreg
 explicit; do not estimate all-of-k by casually raising a pooled mean to a power.
 
 Report per-family and relevant user/security slices, critical violations, valid
-execution coverage, paired deltas and within-task variation. Repeats are not extra
+execution coverage, paired deltas and within-task variation. For matched pass/fail
+cases, show improved, regressed and unchanged counts alongside the aggregate delta;
+unchanged totals can conceal consequential regressions. Repeats are not extra
 independent tasks. Pooling across tasks mixes difficulty with stochastic variation.
+
+When a population comparison drives a decision, predeclare the smallest benefit
+or regression that would change it and assess whether the sample can resolve that
+margin. An interval containing zero does not by itself establish equivalence,
+absence of effect or safety; compare the range of plausible effects with the
+decision's tolerances. Keep unresolved direction or magnitude explicit.
 
 Use uncertainty methods only with defensible sampling/dependence assumptions.
 A tiny synthetic pilot can provide exact counts, failure examples and tentative

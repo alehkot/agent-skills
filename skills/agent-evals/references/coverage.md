@@ -59,6 +59,14 @@ contract at each handoff. For memory include cache/session persistence and reset
 boundaries. For tool work include failure before and after effects, retries and
 concurrency where the architecture exposes them. Omit absent components.
 
+For a multi-stage system, inspect the needed intermediate evidence and how the
+next stage uses it, while retaining the end-to-end outcome. For retrieval, check
+whether the necessary authorized passage reached the answerer, then whether the
+answer used it correctly; a document-level hit alone may not establish this.
+Substituting a checked intermediate input can help diagnose a failure. Label that
+run as a diagnostic intervention, outside ordinary end-to-end pass rates; one
+successful intervention does not establish a unique cause or a production fix.
+
 ## Coverage is a bounded argument
 
 Use rows such as:
