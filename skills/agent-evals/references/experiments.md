@@ -1,5 +1,14 @@
 # Experiments and coverage maintenance
 
+## Contents
+
+- [Freeze before looking at candidate results](#freeze-before-looking-at-candidate-results)
+- [Observe the workflow being claimed](#observe-the-workflow-being-claimed)
+- [Plan counts and failures](#plan-counts-and-failures)
+- [Report metrics for the actual decision](#report-metrics-for-the-actual-decision)
+- [Gates and continued learning](#gates-and-continued-learning)
+
+
 ## Freeze before looking at candidate results
 
 Record task families and splits, raw inputs and policies, agent-visible versus

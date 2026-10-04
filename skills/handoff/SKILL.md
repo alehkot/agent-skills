@@ -53,6 +53,16 @@ spent limits, and remaining work when relevant. An execution prompt does not
 create or transfer a runtime goal object, grant new permissions, or certify
 completion.
 
+Adapt the scaffold's detail and grouping to the continuation while retaining its required context and restart fields. Keep verified state, literal commands, source pointers, permissions, and spent review limits exact.
+
+Before delivery, track these checks internally:
+
+- [ ] The objective, current state, remaining work, and first restart action agree.
+- [ ] Claims of completion and verification match inspected evidence; permissions and spent limits survived compaction.
+- [ ] The prompt is self-contained and has no secrets or invented history.
+
+Correct confirmed prompt defects once, then recheck the complete prompt against the source history. Report unresolved gaps; a caller's explicit review budget takes precedence.
+
 ## Deliver
 
 Return one fenced, paste-ready prompt in chat. If asked to save it, use the

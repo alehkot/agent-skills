@@ -1,5 +1,13 @@
 # Verify the reference and the check
 
+## Contents
+
+- [Choose evidence per property](#choose-evidence-per-property)
+- [Write discriminating assertions](#write-discriminating-assertions)
+- [Use the smallest decisive control](#use-the-smallest-decisive-control)
+- [Validate judgments and repair affected evidence](#validate-judgments-and-repair-affected-evidence)
+
+
 Trace each decisive expectation to source facts or an independently checked
 derivation. Keep recommendations, assumptions and unknowns out of ground truth.
 An unsupported reference can reward a bad candidate and reject a correct one.
