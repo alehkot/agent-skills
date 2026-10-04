@@ -18,6 +18,7 @@ REFERENCES = {
     ),
     "challenge-me": ("decision-log.md",),
     "handoff": ("prompt-template.md",),
+    "make-it-click": ("learning-patterns.md",),
     "review-loop": ("review-protocol.md",),
 }
 PUBLIC_FILES = frozenset({

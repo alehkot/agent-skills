@@ -1,0 +1,4 @@
+interface:
+  display_name: "Make It Click"
+  short_description: "Clear explanations with examples and optional practice"
+  default_prompt: "Use $make-it-click to help me understand this, with a concrete example and depth suited to what I already know."

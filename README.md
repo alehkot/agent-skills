@@ -1,14 +1,16 @@
 # Agent Skills
 
-Skills for challenging ideas, handing off execution, reviewing completed
-work, and designing or auditing AI-agent evaluations. Each skill works alone in
-Codex, Claude, or another agent that reads Agent Skills.
+Skills for challenging ideas, explaining unfamiliar subjects, handing off
+execution, reviewing completed work, and designing or auditing AI-agent
+evaluations. Each skill works alone in Codex, Claude, or another agent that
+reads Agent Skills.
 
 ## Skills
 
 | Skill | Use for |
 | --- | --- |
 | `challenge-me` | Persistent hard questions that expose assumptions and resolve ambiguities, with a working Markdown decision log. |
+| `make-it-click` | Explanations of code, documents, systems, and concepts, with concrete examples, relevant evidence, and optional practice. |
 | `handoff` | A paste-ready execution prompt for a fresh agent, preserving compacted context, pitfalls, verification, and the restart point. |
 | `review-loop` | Review, repair, and re-review until no findings at the selected severity remain, within a bounded review budget. |
 | `agent-evals` | Design or review AI-agent evaluations using an evidence-based rubric for purpose, coverage, references, discrimination, realism, measurement integrity, and proportionality. |
@@ -37,6 +39,35 @@ an established scratch-note or decision-log convention. Otherwise it uses a
 unique OS temporary directory, such as `/tmp`. Ordinary repositories do not get
 permanent scratch documentation by default. If writes are unavailable, the
 conversation holds the log and the persistence limitation is disclosed.
+
+## Understand an unfamiliar subject
+
+```text
+Use $make-it-click to help me understand how requests pass through this service.
+I know Python, but I am unfamiliar with queues. Trace a concrete request and
+explain which reasons for the design are actually documented.
+```
+
+The skill also works outside code:
+
+```text
+Help me understand the argument in this report. Explain its assumptions with
+an example, without a quiz.
+
+Teach me the difference between probability and likelihood. Start with an
+example, then offer a small application problem if it would help.
+```
+
+It gives a useful first explanation, adapts to what you already know, and uses
+visuals when they clarify the subject. Historical reasons stay separate from
+inferences. Practice starts when you request or accept it, and you can ask for
+more detail, a direct answer, or a different pace at any time.
+
+Learning requests can select the skill automatically. A quick factual lookup,
+pure summary, edit, or critique alone does not need a teaching session. Outputs
+stay in the conversation unless you request an artifact; if you also authorize
+an action, such as explaining a change and then implementing it, the explanation
+does not replace that action or make an exercise a prerequisite.
 
 ## Hand off execution
 

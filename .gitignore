@@ -16,6 +16,7 @@
 !/skills/agent-evals/
 !/skills/challenge-me/
 !/skills/handoff/
+!/skills/make-it-click/
 !/skills/review-loop/
 /skills/*/*
 !/skills/*/SKILL.md
@@ -31,4 +32,5 @@
 !/skills/agent-evals/references/rubric.md
 !/skills/challenge-me/references/decision-log.md
 !/skills/handoff/references/prompt-template.md
+!/skills/make-it-click/references/learning-patterns.md
 !/skills/review-loop/references/review-protocol.md
