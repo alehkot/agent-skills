@@ -85,6 +85,37 @@ and does no more review work without an explicit extension. A fresh session or
 handoff does not reset the budget. The skill checks the clock and bounds tool
 calls where supported; it is not a process supervisor or a global runtime hook.
 
+## Design or review agent evaluations
+
+Use design mode to turn a decision and task requirements into concrete cases,
+expected outcomes, and checks:
+
+```text
+Use $agent-evals to design evaluations for our document-search assistant.
+We want to know whether a new prompt improves answers grounded in the supplied
+documents. Define cases, acceptable answers, graders, and a comparison with the
+current prompt. Identify missing evidence before making a release claim.
+```
+
+Use review mode to examine an existing evaluation and the conclusions drawn from
+its results:
+
+```text
+Use $agent-evals to review these test cases, graders, and saved agent results.
+Check the expected answers, coverage, and conclusions against the requirements.
+Report supported defects or a supported clean assessment. Explain the repairs
+needed and which saved results would need regrading or new execution.
+```
+
+Both modes use the same seven-criterion rubric. Design produces an evaluation
+specification with concrete inputs and expected outcomes; review produces findings
+with source evidence, consequences, and precise repairs. Missing evidence remains
+explicit, and critical defects cannot be hidden by favorable ratings elsewhere.
+
+Evaluation quality, execution status, and candidate outcomes are reported
+separately. A sound evaluation can expose a failing agent. Proposed checks are
+not reported as executed, and rubric ratings are not pass rates or release approval.
+
 ## Installing
 
 Preview the published bundle:
