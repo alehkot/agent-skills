@@ -61,7 +61,11 @@ def markdown_links(text: str) -> list[str]:
     result = []
     for _, line in unfenced_lines(text):
         # Code spans are examples, not resource links.
-        line = re.sub(r"(`+)(.*?)\1", lambda m: " " * len(m[0]), line)
+        line = re.sub(
+            r"(?<!`)(`+)(?!`)(.*?)(?<!`)\1(?!`)",
+            lambda m: " " * len(m[0]),
+            line,
+        )
         for match in re.finditer(r"\[[^\]\n]*\]\(([^)\n]+)\)", line):
             target = match[1].strip()
             if target.startswith("<"):
@@ -112,28 +116,8 @@ def validate_reference_resources(skill_dir: Path) -> None:
     linked: set[Path] = set()
     for path in [skill_md, *paths]:
         for target in markdown_links(path.read_text(encoding="utf-8")):
-            parts = urlsplit(target)
-            if parts.scheme or parts.netloc:
-                continue
-            resolved = (
-                (path.parent / unquote(parts.path)).resolve()
-                if parts.path
-                else path.resolve()
-            )
-            if not resolved.is_relative_to(root):
-                raise ValueError(
-                    f"{path}: link {target!r} escapes the standalone skill"
-                )
-            if not resolved.is_file():
-                raise ValueError(f"{path}: broken local link {target!r}")
-            if parts.fragment and resolved.suffix == ".md":
-                anchors = {
-                    h[3]
-                    for h in markdown_headings(resolved.read_text(encoding="utf-8"))
-                }
-                if unquote(parts.fragment) not in anchors:
-                    raise ValueError(f"{path}: incorrect anchor in {target!r}")
-            if path == skill_md:
+            resolved = validate_local_link(path, target, root)
+            if path == skill_md and resolved is not None:
                 linked.add(resolved)
     for path in paths:
         if path.resolve() not in linked:
@@ -155,7 +139,7 @@ REFERENCES = {
 }
 PUBLIC_FILES = frozenset({
     ".gitignore", ".github/workflows/validate.yml", "LICENSE", "README.md",
-    "scripts/validate_public.py",
+    "scripts/validate_public.py", "scripts/test_validate_public.py",
 } | {
     f"skills/{name}/{path}"
     for name, references in REFERENCES.items()
@@ -217,25 +201,39 @@ def check_skill(name: str) -> None:
         raise ValueError(f"{name}: default prompt must identify its skill")
 
 
+def validate_local_link(path: Path, target: str, boundary: Path) -> Path | None:
+    """Validate one destination against the bundle and its document boundary."""
+    parts = urlsplit(target)
+    if parts.scheme or parts.netloc:
+        return None
+    resolved = (
+        (path.parent / unquote(parts.path)).resolve()
+        if parts.path
+        else path.resolve()
+    )
+    if not resolved.is_relative_to(boundary.resolve()):
+        raise ValueError(f"{path}: link leaves its allowed directory: {target!r}")
+    relative = resolved.relative_to(ROOT.resolve()).as_posix()
+    if relative not in PUBLIC_FILES:
+        raise ValueError(f"{path}: link is not in the bundle: {target!r}")
+    if not resolved.is_file():
+        raise ValueError(f"{path}: broken local link {target!r}")
+    if parts.fragment and resolved.suffix == ".md":
+        anchors = {
+            h[3] for h in markdown_headings(resolved.read_text(encoding="utf-8"))
+        }
+        if unquote(parts.fragment) not in anchors:
+            raise ValueError(f"{path}: incorrect anchor in {target!r}")
+    return resolved
+
+
 def check_links(name: str, text: str) -> None:
-    for target in re.findall(r"\[[^\]\n]*\]\(([^\s)]+)\)", text):
-        target = target.strip("<>")
-        parts = urlsplit(target)
-        if parts.scheme or parts.netloc or not parts.path:
-            continue
-        path = (ROOT / name).parent / unquote(parts.path)
-        resolved = path.resolve()
-        try:
-            relative = resolved.relative_to(ROOT).as_posix()
-        except ValueError:
-            raise ValueError(f"{name}: link leaves the bundle: {target}") from None
-        if relative not in PUBLIC_FILES:
-            raise ValueError(f"{name}: link is not in the bundle: {target}")
-        components = PurePosixPath(name).parts
-        if components[0] == "skills":
-            skill_root = (ROOT / "skills" / components[1]).resolve()
-            if not resolved.is_relative_to(skill_root):
-                raise ValueError(f"{name}: skill link leaves its directory: {target}")
+    components = PurePosixPath(name).parts
+    boundary = (
+        ROOT / "skills" / components[1] if components[0] == "skills" else ROOT
+    )
+    for target in markdown_links(text):
+        validate_local_link(ROOT / name, target, boundary)
 
 
 def main() -> int:
