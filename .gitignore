@@ -11,6 +11,7 @@
 !/scripts/
 /scripts/*
 !/scripts/validate_public.py
+!/scripts/test_validate_public.py
 !/skills/
 /skills/*
 !/skills/agent-evals/

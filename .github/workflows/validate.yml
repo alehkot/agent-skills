@@ -21,3 +21,6 @@ jobs:
 
       - name: Validate the distributable bundle
         run: python scripts/validate_public.py
+
+      - name: Test the bundle checker
+        run: python scripts/test_validate_public.py

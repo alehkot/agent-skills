@@ -188,9 +188,16 @@ to install:
 
 ```bash
 python3 scripts/validate_public.py
+python3 scripts/test_validate_public.py
 ```
 
-It checks the tracked file inventory, skill metadata, and bundled Markdown links.
+It checks the tracked file inventory, skill metadata, and bundled inline Markdown
+links, including quoted link titles and ATX-heading fragments. Local destinations
+must be tracked bundle files; links within a skill must stay in that standalone
+skill. Fenced examples and same-line code spans are not treated as live links.
+The checker handles the bundle's Markdown conventions, not all CommonMark syntax
+(such as reference-style links, HTML links, or Setext headings). The regression
+tests run with the same standard-library-only requirements.
 A clean check confirms these structural properties; it does not measure an
 agent's behavior or guarantee task outcomes.
 
