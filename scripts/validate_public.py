@@ -21,10 +21,13 @@ def unfenced_lines(text: str) -> list[tuple[int, str]]:
         if match:
             marker, tail = match.groups()
             if fence is None:
-                fence = (marker[0], len(marker))
+                # Backticks cannot occur in a backtick fence's info string.
+                # A same-line code span at column zero is not a fenced block.
+                if marker[0] != "`" or "`" not in tail:
+                    fence = (marker[0], len(marker))
             elif marker[0] == fence[0] and len(marker) >= fence[1] and not tail.strip():
                 fence = None
-            continue
+                continue
         if fence is None:
             result.append((number, line))
     return result
@@ -57,22 +60,42 @@ def markdown_headings(text: str) -> list[tuple[int, int, str, str]]:
 
 
 def markdown_links(text: str) -> list[str]:
-    """Read inline link destinations outside fenced examples and inline code."""
+    """Read the bundle's single-line inline links, excluding code examples.
+
+    Consume complete links before inspecting their titles for backticks. Masking
+    code spans over a whole line first can hide real links between two titles.
+    This is a deliberately small scanner, not a complete CommonMark parser.
+    """
+    link = re.compile(
+        r'\[[^\]\n]*\]\([ \t]*'
+        r'(?:<(?P<angle>[^<>\n]*)>|(?P<bare>[^\s()]*))'
+        r'''(?:[ \t]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\)))?'''
+        r'[ \t]*\)'
+    )
     result = []
     for _, line in unfenced_lines(text):
-        # Code spans are examples, not resource links.
-        line = re.sub(
-            r"(?<!`)(`+)(?!`)(.*?)(?<!`)\1(?!`)",
-            lambda m: " " * len(m[0]),
-            line,
-        )
-        for match in re.finditer(r"\[[^\]\n]*\]\(([^)\n]+)\)", line):
-            target = match[1].strip()
-            if target.startswith("<"):
-                target = target[1:].split(">", 1)[0]
-            else:
-                target = target.split(' "', 1)[0].split(" '", 1)[0]
-            result.append(target)
+        position = 0
+        while position < len(line):
+            if line[position] == "\\":
+                # An escaped opening delimiter is literal text, not code/link.
+                position += 2
+                continue
+            if line[position] == "`":
+                end = position + 1
+                while end < len(line) and line[end] == "`":
+                    end += 1
+                closing = re.search(rf"(?<!`)`{{{end - position}}}(?!`)", line[end:])
+                position = end + closing.end() if closing else end
+                continue
+            if line[position] == "[":
+                match = link.match(line, position)
+                if match:
+                    result.append(
+                        match["angle"] if match["angle"] is not None else match["bare"]
+                    )
+                    position = match.end()
+                    continue
+            position += 1
     return result
 
 

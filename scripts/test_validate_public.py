@@ -25,6 +25,36 @@ class MarkdownLinksTests(unittest.TestCase):
             ["one.md", "two.md", "three words.md", "four.md#section"],
         )
 
+    def test_titles_can_contain_backticks_and_parentheses(self) -> None:
+        text = (
+            '[One](one.md "Use `one`") [Two](two.md "Use `two`")\n'
+            '[Three](three.md "A \\`") [Four](four.md "A \\`")\n'
+            '[Five](five.md "A (title)") [Six](six.md (Title))'
+        )
+        self.assertEqual(
+            validator.markdown_links(text),
+            ["one.md", "two.md", "three.md", "four.md", "five.md", "six.md"],
+        )
+
+    def test_title_separator_accepts_tabs_and_multiple_spaces(self) -> None:
+        for separator in (" ", "   ", "\t", " \t "):
+            with self.subTest(separator=separator):
+                self.assertEqual(
+                    validator.markdown_links(f'[One](one.md{separator}"Title")'),
+                    ["one.md"],
+                )
+
+    def test_escaped_opening_backtick_does_not_hide_live_link(self) -> None:
+        self.assertEqual(
+            validator.markdown_links(r'\` [Actual](actual.md) `'),
+            ["actual.md"],
+        )
+        self.assertEqual(validator.markdown_links(r'`\` [Actual](actual.md)'), ["actual.md"])
+
+    def test_same_line_triple_backticks_are_not_a_fence(self) -> None:
+        text = '```[Example](missing.md)``` [Actual](actual.md)\n[Next](next.md)'
+        self.assertEqual(validator.markdown_links(text), ["actual.md", "next.md"])
+
     def test_code_spans_do_not_hide_adjacent_live_links(self) -> None:
         text = '`[Example](missing.md)` [Actual](actual.md)'
         self.assertEqual(validator.markdown_links(text), ["actual.md"])
@@ -271,6 +301,31 @@ class BundleIntegrationTests(unittest.TestCase):
         result = self.validate()
         self.assertNotEqual(result.returncode, 0, result.stdout)
         self.assertIn("incorrect anchor", result.stderr)
+
+    def test_title_backticks_cannot_hide_missing_dependency(self) -> None:
+        self.append(
+            "README.md", r'[License](LICENSE "A \`") [Missing](missing.md "A \`")'
+        )
+        result = self.validate()
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn("not in the bundle", result.stderr)
+
+    def test_same_line_triple_code_cannot_hide_missing_dependency(self) -> None:
+        self.append("README.md", '```literal``` [Missing](missing.md)')
+        result = self.validate()
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn("not in the bundle", result.stderr)
+
+    def test_escaped_backtick_cannot_hide_missing_dependency(self) -> None:
+        self.append("README.md", r'\` [Missing](missing.md) `')
+        result = self.validate()
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn("not in the bundle", result.stderr)
+
+    def test_tab_separated_valid_title_passes(self) -> None:
+        self.append("README.md", '[License](LICENSE\t"License")')
+        result = self.validate()
+        self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_unexpected_tracked_file_still_fails(self) -> None:
         (self.root / "extra.md").write_text("# Extra\n", encoding="utf-8")
