@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import json
 import shutil
 import subprocess
 import sys
@@ -237,6 +238,156 @@ class LinkValidationTests(unittest.TestCase):
         validator.validate_reference_resources(self.root / "skills/example")
 
 
+
+class InterfaceMetadataTests(unittest.TestCase):
+    """Exercise metadata through check_skill, including its file-reading path."""
+
+    def setUp(self) -> None:
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.skill = self.root / "skills/handoff"
+        (self.skill / "agents").mkdir(parents=True)
+        (self.skill / "SKILL.md").write_text(
+            "---\nname: handoff\ndescription: Prepare a continuation prompt.\n---\n",
+            encoding="utf-8",
+        )
+        self.metadata = self.skill / "agents/openai.yaml"
+        self.fields = {
+            "display_name": "Handoff",
+            "short_description": "Continue with fresh context",
+            "default_prompt": "Use $handoff to continue.",
+        }
+        patcher = patch.object(validator, "ROOT", self.root)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def document(self, **overrides: str) -> str:
+        fields = self.fields | overrides
+        return "interface:\n" + "".join(
+            f"  {key}: {json.dumps(value, ensure_ascii=False)}\n"
+            for key, value in fields.items()
+        )
+
+    def check(self, text: str) -> None:
+        self.metadata.write_text(text, encoding="utf-8")
+        validator.check_skill("handoff")
+
+    def test_canonical_interface_passes(self) -> None:
+        self.check(self.document())
+
+    def test_all_published_interfaces_pass(self) -> None:
+        source = Path(__file__).resolve().parents[1]
+        for name in validator.REFERENCES:
+            with self.subTest(skill=name), patch.object(validator, "ROOT", source):
+                validator.check_skill(name)
+
+    def test_missing_wrong_or_duplicate_root_fails(self) -> None:
+        text = self.document()
+        for mutant in (
+            text.removeprefix("interface:\n"),
+            text.replace("interface:", "other:"),
+            "interface: {}\n" + text.removeprefix("interface:\n"),
+            text + "interface:\n",
+            " interface:\n" + text.removeprefix("interface:\n"),
+            "---\n" + text,
+            text + "...\n",
+        ):
+            with self.subTest(text=mutant), self.assertRaises(ValueError):
+                self.check(mutant)
+
+    def test_duplicate_fields_fail_even_when_values_agree(self) -> None:
+        for key, value in self.fields.items():
+            for duplicate in (value, "Unrelated text"):
+                with self.subTest(key=key, value=duplicate), self.assertRaises(ValueError):
+                    self.check(self.document() + f"  {key}: {json.dumps(duplicate)}\n")
+
+    def test_missing_fields_fail(self) -> None:
+        for key in self.fields:
+            text = "\n".join(
+                line for line in self.document().splitlines()
+                if not line.startswith(f"  {key}:")
+            )
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                self.check(text)
+
+    def test_unknown_fields_and_nested_blocks_fail(self) -> None:
+        for extra in (
+            '  unexpected: "Value"\n',
+            'policy:\n  default_prompt: "Use $handoff"\n',
+            '  nested:\n    default_prompt: "Use $handoff"\n',
+        ):
+            with self.subTest(extra=extra), self.assertRaises(ValueError):
+                self.check(self.document() + extra)
+
+    def test_wrong_field_token_does_not_satisfy_default_prompt(self) -> None:
+        for key in ("display_name", "short_description"):
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "default prompt"):
+                self.check(self.document(**{key: "$handoff", "default_prompt": "Continue."}))
+
+    def test_comment_token_does_not_satisfy_default_prompt(self) -> None:
+        with self.assertRaisesRegex(ValueError, "default prompt"):
+            self.check(self.document(default_prompt="Continue.") + "# Use $handoff\n")
+
+    def test_longer_skill_name_or_embedded_token_fails(self) -> None:
+        for token in ("$handoff-other", "$handoff2", "$handoff_other", "x$handoff", "$$handoff"):
+            with self.subTest(token=token), self.assertRaisesRegex(ValueError, "default prompt"):
+                self.check(self.document(default_prompt=f"Use {token}."))
+
+    def test_exact_skill_token_with_punctuation_passes(self) -> None:
+        for token in ("$handoff", "($handoff)", "`$handoff`", '"$handoff"', "$handoff."):
+            with self.subTest(token=token):
+                self.check(self.document(default_prompt=token))
+
+    def test_escaped_quotes_backslashes_and_unicode_pass(self) -> None:
+        self.check(self.document(display_name='Handoff "notes" \\ café 🔎'))
+        # The check uses the decoded value, not its source spelling.
+        self.check(self.document().replace("$handoff", r"\u0024handoff"))
+
+    def test_invalid_escapes_quotes_and_trailing_data_fail(self) -> None:
+        for value in (r'"Bad\q"', '"Unclosed', '"One" "Two"', '"Bad "quotes""', 'true', 'null', '["text"]'):
+            text = self.document().replace('"Handoff"', value)
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                self.check(text)
+
+    def test_empty_whitespace_controls_and_lone_surrogates_fail(self) -> None:
+        for key in self.fields:
+            for value in ("", "   ", "\t", "Text\nLine", "Text\x00", "Text\x7f", "Text\ud800"):
+                fields = self.fields | {key: value}
+                text = "interface:\n" + "".join(
+                    f"  {k}: {json.dumps(v)}\n" for k, v in fields.items()
+                )
+                with self.subTest(key=key, value=repr(value)), self.assertRaises(ValueError):
+                    self.check(text)
+
+    def test_raw_controls_cannot_hide_in_comments_or_line_breaks(self) -> None:
+        for text in (
+            self.document() + "# ignored\x00comment\n",
+            self.document().replace("interface:\n", "interface:\x0c"),
+        ):
+            with self.subTest(text=repr(text)), self.assertRaises(ValueError):
+                self.check(text)
+
+    def test_field_order_comments_and_blank_lines_pass(self) -> None:
+        self.check(
+            "# metadata\n\ninterface:\n\n  # prompt first\n"
+            + "".join(
+                f"  {key}: {json.dumps(value)}\n"
+                for key, value in reversed(list(self.fields.items()))
+            )
+            + "\n# end\n"
+        )
+
+    def test_unsupported_indentation_or_single_quotes_fail(self) -> None:
+        for text in (
+            self.document().replace("  display_name:", "    display_name:"),
+            self.document().replace("  display_name:", "\tdisplay_name:"),
+            self.document().replace('"Handoff"', "'Handoff'"),
+        ):
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                self.check(text)
+
+
 class BundleIntegrationTests(unittest.TestCase):
     """Exercise the command on real tracked files in an isolated checkout."""
 
@@ -324,6 +475,33 @@ class BundleIntegrationTests(unittest.TestCase):
 
     def test_tab_separated_valid_title_passes(self) -> None:
         self.append("README.md", '[License](LICENSE\t"License")')
+        result = self.validate()
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+
+    def test_misleading_interface_metadata_fails_at_cli(self) -> None:
+        path = self.root / "skills/handoff/agents/openai.yaml"
+        original = path.read_text(encoding="utf-8")
+        for mutant in (
+            original.replace("interface:", "other:"),
+            original + '  default_prompt: "Continue without a skill."\n',
+            original.replace('"Handoff"', '"$handoff"').replace("Use $handoff to", "Continue to"),
+            original.replace("$handoff", "$handoff-other"),
+            original.replace('"Handoff"', r'"Invalid\q"'),
+            original.replace('"Handoff"', '"   "'),
+        ):
+            with self.subTest(metadata=mutant):
+                path.write_text(mutant, encoding="utf-8")
+                result = self.validate()
+                self.assertNotEqual(result.returncode, 0, result.stdout)
+                self.assertIn("validation failed:", result.stderr)
+
+    def test_escaped_interface_string_passes_at_cli(self) -> None:
+        path = self.root / "skills/handoff/agents/openai.yaml"
+        path.write_text(
+            path.read_text(encoding="utf-8").replace('"Handoff"', r'"Handoff \"notes\""'),
+            encoding="utf-8",
+        )
         result = self.validate()
         self.assertEqual(result.returncode, 0, result.stderr)
 

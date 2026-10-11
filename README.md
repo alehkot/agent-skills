@@ -198,6 +198,16 @@ skill. Fenced examples and same-line code spans are not treated as live links.
 The checker handles the bundle's Markdown conventions, not all CommonMark syntax
 (such as reference-style links, HTML links, or Setext headings). The regression
 tests run with the same standard-library-only requirements.
+
+For `agents/openai.yaml`, this bundle uses a deliberately small format: one
+`interface:` mapping containing exactly `display_name`, `short_description`, and
+`default_prompt`, each indented two spaces with a nonblank, single-line
+JSON-compatible double-quoted string. Blank lines, whole-line comments, and any
+field order are allowed. The decoded default prompt must name its own `$skill-name`
+as a complete token; a mention in another field or a longer skill name does not
+count. Duplicate fields, invalid escapes, and control characters are rejected.
+This is a repository convention, not the full Codex/YAML schema. Extend the
+checker and its tests before adding other metadata fields or YAML forms.
 A clean check confirms these structural properties; it does not measure an
 agent's behavior or guarantee task outcomes.
 
