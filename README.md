@@ -205,7 +205,9 @@ For `agents/openai.yaml`, this bundle uses a deliberately small format: one
 JSON-compatible double-quoted string. Blank lines, whole-line comments, and any
 field order are allowed. The decoded default prompt must name its own `$skill-name`
 as a complete token; a mention in another field or a longer skill name does not
-count. Duplicate fields, invalid escapes, and control characters are rejected.
+count. Duplicate fields, invalid escapes, control characters, and raw Unicode
+line/paragraph separators are rejected. Blank/comment indentation uses spaces or
+tabs; other Unicode whitespace is not silently discarded.
 This is a repository convention, not the full Codex/YAML schema. Extend the
 checker and its tests before adding other metadata fields or YAML forms.
 A clean check confirms these structural properties; it does not measure an

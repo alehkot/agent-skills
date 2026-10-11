@@ -363,6 +363,10 @@ class InterfaceMetadataTests(unittest.TestCase):
     def test_raw_controls_cannot_hide_in_comments_or_line_breaks(self) -> None:
         for text in (
             self.document() + "# ignored\x00comment\n",
+            self.document(display_name="Not YAML-printable \ufffe"),
+            self.document() + "# ignored\uffffcomment\n",
+            self.document() + "# ignored\u2028fragment\n",
+            self.document() + "# ignored\u2029fragment\n",
             self.document().replace("interface:\n", "interface:\x0c"),
         ):
             with self.subTest(text=repr(text)), self.assertRaises(ValueError):
@@ -377,6 +381,11 @@ class InterfaceMetadataTests(unittest.TestCase):
             )
             + "\n# end\n"
         )
+
+    def test_non_yaml_whitespace_is_not_ignored_as_blank_or_comment(self) -> None:
+        for prefix in ("\u00a0# comment\n", "\u00a0\n", "\u3000# comment\n"):
+            with self.subTest(prefix=repr(prefix)), self.assertRaises(ValueError):
+                self.check(prefix + self.document())
 
     def test_unsupported_indentation_or_single_quotes_fail(self) -> None:
         for text in (

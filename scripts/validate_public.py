@@ -229,14 +229,15 @@ def check_interface(name: str, text: str) -> None:
     satisfy the contract accidentally. JSON string syntax is a YAML subset.
     """
     if any(
-        unicodedata.category(char) in {"Cc", "Cs"} and char not in "\t\r\n"
+        (unicodedata.category(char) in {"Cc", "Cs"} and char not in "\t\r\n")
+        or char in "\u2028\u2029\ufffe\uffff"
         for char in text
     ):
-        raise ValueError(f"{name}: unexpected control character in openai.yaml")
+        raise ValueError(f"{name}: unexpected non-printable character in openai.yaml")
     lines = [
         (number, line)
         for number, line in enumerate(text.splitlines(), 1)
-        if line.strip() and not line.lstrip().startswith("#")
+        if line.strip(" \t") and not line.lstrip(" \t").startswith("#")
     ]
     if not lines or lines[0][1] != "interface:":
         raise ValueError(f"{name}: expected an interface mapping in openai.yaml")
