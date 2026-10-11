@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 import subprocess
 import sys
@@ -217,11 +218,55 @@ def check_skill(name: str) -> None:
     if not description or not description.group(1).replace(">-", "").strip():
         raise ValueError(f"{name}: empty description")
     metadata = (path.parent / "agents/openai.yaml").read_text(encoding="utf-8")
-    for key in ("display_name", "short_description", "default_prompt"):
-        if not re.search(rf'^  {key}: "[^"\n]+"$', metadata, re.MULTILINE):
-            raise ValueError(f"{name}: missing interface field {key}")
-    if f"${name}" not in metadata:
-        raise ValueError(f"{name}: default prompt must identify its skill")
+    check_interface(name, metadata)
+
+
+def check_interface(name: str, text: str) -> None:
+    """Check this bundle's three-field, JSON-quoted subset of openai.yaml.
+
+    This is intentionally not a general YAML parser. Recognize the whole
+    document before checking values so misplaced or duplicate fields cannot
+    satisfy the contract accidentally. JSON string syntax is a YAML subset.
+    """
+    if any(
+        (unicodedata.category(char) in {"Cc", "Cs"} and char not in "\t\r\n")
+        or char in "\u2028\u2029\ufffe\uffff"
+        for char in text
+    ):
+        raise ValueError(f"{name}: unexpected non-printable character in openai.yaml")
+    lines = [
+        (number, line)
+        for number, line in enumerate(text.splitlines(), 1)
+        if line.strip(" \t") and not line.lstrip(" \t").startswith("#")
+    ]
+    if not lines or lines[0][1] != "interface:":
+        raise ValueError(f"{name}: expected an interface mapping in openai.yaml")
+    required = {"display_name", "short_description", "default_prompt"}
+    values: dict[str, str] = {}
+    for number, line in lines[1:]:
+        field = re.fullmatch(r'  ([a-z_]+): (".*")', line)
+        if field is None or field[1] not in required:
+            raise ValueError(
+                f"{name}: openai.yaml:{number}: expected a supported interface field "
+                "with a single-line JSON-quoted value"
+            )
+        key, scalar = field.groups()
+        if key in values:
+            raise ValueError(f"{name}: duplicate interface field {key}")
+        try:
+            value = json.loads(scalar)
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"{name}: invalid quoted interface field {key}") from exc
+        if not value.strip() or any(
+            unicodedata.category(char) in {"Cc", "Cs"} for char in value
+        ):
+            raise ValueError(f"{name}: interface field {key} must be nonblank text without controls")
+        values[key] = value
+    missing = required - values.keys()
+    if missing:
+        raise ValueError(f"{name}: missing interface fields {sorted(missing)}")
+    if not re.search(rf"(?<![\w$-])\${re.escape(name)}(?![\w-])", values["default_prompt"]):
+        raise ValueError(f"{name}: default prompt must identify its skill as ${name}")
 
 
 def validate_local_link(path: Path, target: str, boundary: Path) -> Path | None:
