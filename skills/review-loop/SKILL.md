@@ -5,7 +5,8 @@ description: >-
   completion gate passes or the review budget is exhausted. Use for iterative
   self-review, a final quality gate, or a goal that must finish with no medium-or-
   higher issues. Defaults to 10 review passes and 30 minutes, with user overrides.
-  Supports code, documents, and knowledge bases; uses a fresh reviewer when available.
+  Supports code, documents, slides, analyses, knowledge bases, and other knowledge
+  work; uses a fresh reviewer when available.
 ---
 
 # Review Loop
@@ -34,14 +35,16 @@ resume; new turns, compaction, and handoffs do not reset the clock or counters.
 Fix the review scope to the whole requested result and its relevant context.
 For code, record the task baseline and include staged, unstaged, and relevant
 untracked work; do not use only the latest commit or last repair diff. For
-documents or knowledge bases, identify the complete changed artifacts and
-source obligations. Protect unrelated changes.
+documents, slides, and other knowledge work, identify the complete changed
+artifacts, intended audience and purpose, and source obligations. Protect
+unrelated changes.
 
 When verification needs setup, several actions, or evidence carried across
 repairs, optionally use [verification-recipe.md](references/verification-recipe.md).
-It binds a check to the artifact actually exercised, its user path, observed
-outcomes and side effects, and retained evidence. A short inspection can stay
-inline in the review log. A recipe is a plan, not proof or a new review budget.
+It binds a check to the artifact actually exercised or inspected, its user path
+or inspection surface, observed outcomes and side effects, and retained evidence.
+A short inspection can stay inline in the review log. A recipe is a plan, not
+proof or a new review budget.
 
 ## Review, reconcile, repair
 
@@ -54,9 +57,11 @@ inline in the review log. A recipe is a plan, not proof or a new review budget.
    it a defense of the implementation. The reviewer must not edit or delegate.
    If unavailable, perform an explicit self-review and disclose the fallback.
    Do not call an external model/provider without applicable authorization.
-3. Review the whole scope for requirements, correctness, relevant failure paths,
-   source fidelity, and regressions. Select relevant concerns rather than
-   inventing absent features or demanding findings. Require location, impact,
+3. Review the whole scope using artifact-appropriate concerns: requirements,
+   correctness, source grounding, reasoning, completeness, audience and purpose,
+   and relevant failure paths or regressions. When readability or layout matters,
+   inspect the actual rendered result; source text alone cannot establish them.
+   Do not invent absent features or demand findings. Require location, impact,
    and evidence tied to a violated requirement or established behavior for each
    issue. Missing necessary evidence is a limitation, not a clean review.
 4. Verify findings against the artifacts. Record confirmed issues, demonstrated

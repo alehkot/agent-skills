@@ -87,6 +87,9 @@ Supply real task data in this shape, without importing the author's rationale:
 Review the complete task result against the supplied requirements and evidence.
 You are read-only: do not edit files, run modifying commands, or spawn agents.
 Read applicable instructions and enough source context to assess the whole scope.
+For knowledge work, check source grounding, reasoning, completeness, and fit for
+the intended audience and purpose. Inspect the actual rendered result for
+readability and layout when relevant; do not infer these from source text alone.
 
 Task and acceptance criteria: <user requirements and accepted decisions>
 Scope and baseline: <all relevant changes/artifacts, not only the last fix>

@@ -6,16 +6,24 @@ user's requested path; do not install a project skill or commit scratch evidence
 by default. For a simple check, record the same essentials inline. This adds no
 permissions, acceptance criteria, reviewer passes, or time allowance.
 
+## Contents
+
+- [Plan the check](#plan-the-check)
+- [Exercise and retain evidence](#exercise-and-retain-evidence)
+- [Knowledge-work examples](#knowledge-work-examples)
+- [Judge the check, then the review](#judge-the-check-then-the-review)
+
 ## Plan the check
 
 Start from the agreed requirement and existing project instructions or harnesses.
 Choose the smallest check that observes the claimed outcome at its actual surface:
 a user action for a UI, a documented command for a CLI, a request for a service,
-or direct inspection and source comparison for a written artifact. Do not replace
+or direct inspection, source comparison, and relevant rendered-output inspection
+for documents, slides, analyses, or other knowledge work. Do not replace
 a required user path with an internal setter, test-only endpoint, or source reading.
 Record any mock, dry-run, or stand-in and the boundary it leaves unverified.
 
-Identify the artifact to be exercised, not just the checkout used to build it.
+Identify the artifact to be exercised or inspected, not just its source material.
 Use a commit plus relevant dirty changes, a content hash, a document version, or
 another reproducible state identifier. A commit alone does not identify modified
 files; source revision alone does not prove which binary or deployment is running.
@@ -51,24 +59,48 @@ close a finding. Check remaining review time before setup, execution, and cleanu
 
 ## Exercise and retain evidence
 
-Confirm preconditions and target identity before driving the path. Process health,
-successful startup, and a ready screen are setup evidence, not feature evidence.
+Confirm preconditions and target identity before exercising or inspecting the
+artifact. Process health, successful startup, and a ready screen are setup
+evidence, not feature evidence.
 Use isolated data or an owned instance where possible. Stop before unapproved
 external actions or data changes; a recipe cannot authorize them. A label such
 as "dry-run" is not evidence that a command has no side effects.
 
 Capture enough to connect the action to the observed outcome: commands and their
 outputs, a request and response, an interaction trace and resulting state, or
-specific artifact passages and supporting sources. Inspect the actual required
-output and relevant side effects, including forbidden changes. Exit zero alone,
-a final screenshot without the required interaction, and an author's statement
-that a check passed do not establish the claimed behavior.
+specific artifact passages, supporting sources, and relevant rendered pages or
+slides. Inspect the actual required output and relevant side effects, including
+forbidden changes. Exit zero alone, a final screenshot without the required
+interaction, and an author's statement that a check passed do not establish
+the claimed behavior.
 
 Keep evidence from failed attempts too. Clean up only resources this run owns,
 including after failed attempts, and record unresolved residue. Keep proof outside
 disposable directories and confirm it remains readable after cleanup. Redact
 secrets or unnecessary personal data without destroying the evidence's meaning.
 Do not publish private evidence merely to make it easier to link.
+
+## Knowledge-work examples
+
+These are illustrative check plans, not executed results. Use only the concerns
+required by the task; a short direct inspection can remain inline in the log.
+
+- **Decision memo:** For a memo comparing three options, record its version and
+  the supplied source versions. Map each requested option to a section, compare
+  material claims with their sources, and check that the recommendation follows
+  from the evidence and answers the intended reader's decision. Retain the
+  section/source locations and any reasoning gaps. Inspect rendered pages if
+  pagination or layout matters. A contradicted material claim is FAIL; an
+  unavailable necessary source is BLOCKED, even if the prose reads well.
+- **Slide deck:** For an eight-slide briefing, identify both the final deck and
+  its rendered export. Check the narrative and required content against the
+  audience and purpose, trace material chart figures to their sources, and
+  inspect every rendered slide at its intended viewing size for readable labels,
+  clipping, overlap, and layout. Retain slide-specific observations and images
+  plus source checks. Text extraction alone cannot pass a required visual check;
+  unavailable rendered evidence leaves that check BLOCKED. After a repair,
+  render the changed deck again and verify the affected output before final-state
+  review.
 
 ## Judge the check, then the review
 

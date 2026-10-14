@@ -86,6 +86,9 @@ It does not launch an agent or transfer a runtime's goal object.
 
 ## Review until the gate passes
 
+Use the same gate for code, documents, slide decks, analyses, knowledge bases,
+and other knowledge work. Choose checks that fit the artifact and task.
+
 ```text
 /goal Implement the requested export change until $review-loop passes.
 ```
@@ -111,12 +114,14 @@ for the original acceptance criteria. Repeated unresolved issues still block.
 
 For checks with setup or several steps, an optional
 [verification recipe](skills/review-loop/references/verification-recipe.md)
-ties the actual artifact to a user path, preconditions, expected and observed
-outcomes, side effects, and evidence retained after cleanup. Each check records
-PASS, FAIL, or BLOCKED separately from the overall review result. A plan, an
+ties the actual artifact to a user path or inspection surface, preconditions,
+expected and observed outcomes, side effects, and evidence retained after cleanup.
+Each check records PASS, FAIL, or BLOCKED separately from the overall review
+result. A plan, an
 old run, or a successful exit code alone cannot establish that a changed result
-works. Written artifacts can use direct inspection and source checks instead
-of runtime execution; simple checks need no separate recipe file.
+works. Documents, slides, and other knowledge work can use direct inspection,
+source checks, and rendered-output checks where relevant. The recipe includes
+memo and slide-deck examples; simple checks need no separate recipe file.
 
 Every reviewer attempt, including failures and the final clean pass, counts.
 A fix after pass ten cannot pass without an authorized extra review. At either
