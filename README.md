@@ -109,6 +109,15 @@ checks findings, fixes confirmed issues, and reruns appropriate verification.
 A passing result requires a clean review of the final state and current evidence
 for the original acceptance criteria. Repeated unresolved issues still block.
 
+For checks with setup or several steps, an optional
+[verification recipe](skills/review-loop/references/verification-recipe.md)
+ties the actual artifact to a user path, preconditions, expected and observed
+outcomes, side effects, and evidence retained after cleanup. Each check records
+PASS, FAIL, or BLOCKED separately from the overall review result. A plan, an
+old run, or a successful exit code alone cannot establish that a changed result
+works. Written artifacts can use direct inspection and source checks instead
+of runtime execution; simple checks need no separate recipe file.
+
 Every reviewer attempt, including failures and the final clean pass, counts.
 A fix after pass ten cannot pass without an authorized extra review. At either
 limit the skill reports **not passed**, preserves the log and restart action,

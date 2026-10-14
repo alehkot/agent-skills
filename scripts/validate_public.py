@@ -159,7 +159,7 @@ REFERENCES = {
     "challenge-me": ("decision-log.md",),
     "handoff": ("prompt-template.md",),
     "make-it-click": ("learning-patterns.md",),
-    "review-loop": ("review-protocol.md",),
+    "review-loop": ("review-protocol.md", "verification-recipe.md"),
 }
 PUBLIC_FILES = frozenset({
     ".gitignore", ".github/workflows/validate.yml", "LICENSE", "README.md",

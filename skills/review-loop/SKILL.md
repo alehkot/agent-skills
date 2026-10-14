@@ -37,6 +37,12 @@ untracked work; do not use only the latest commit or last repair diff. For
 documents or knowledge bases, identify the complete changed artifacts and
 source obligations. Protect unrelated changes.
 
+When verification needs setup, several actions, or evidence carried across
+repairs, optionally use [verification-recipe.md](references/verification-recipe.md).
+It binds a check to the artifact actually exercised, its user path, observed
+outcomes and side effects, and retained evidence. A short inspection can stay
+inline in the review log. A recipe is a plan, not proof or a new review budget.
+
 ## Review, reconcile, repair
 
 1. Read the log and actual clock. Before starting a pass, check both limits,

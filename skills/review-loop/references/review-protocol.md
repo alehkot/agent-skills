@@ -41,6 +41,7 @@ Passes started: 0
 Status: ready | running | PASS | LIMIT_REACHED | BLOCKED | STOPPED
 Reviewer mode: fresh-context | self-review fallback, with reason
 Latest reviewed state: <revision or identifiable artifact state>
+Verification: <check records or optional recipe path; state exercised and evidence>
 
 ## Findings
 | ID | Severity | Location and evidence | Disposition | Closure evidence |
@@ -90,6 +91,8 @@ Read applicable instructions and enough source context to assess the whole scope
 Task and acceptance criteria: <user requirements and accepted decisions>
 Scope and baseline: <all relevant changes/artifacts, not only the last fix>
 Sources and checks: <paths and commands; verify their meaning and current results>
+Verification records, if used: <planned vs executed checks, artifact identity,
+observations, retained evidence, and gaps; not just verdict labels>
 Severity threshold: <effective threshold and definitions>
 Time available: <remaining allowance; stop before it expires>
 
