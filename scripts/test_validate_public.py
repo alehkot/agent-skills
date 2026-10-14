@@ -435,6 +435,26 @@ class BundleIntegrationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("Validated 5 skills", result.stdout)
 
+    def test_verification_recipe_must_be_in_tracked_bundle(self) -> None:
+        self.git("rm", "--cached", "skills/review-loop/references/verification-recipe.md")
+        result = self.validate()
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn("Tracked inventory differs", result.stderr)
+        self.assertIn("skills/review-loop/references/verification-recipe.md", result.stderr)
+
+    def test_verification_recipe_requires_direct_entrypoint_link(self) -> None:
+        path = self.root / "skills/review-loop/SKILL.md"
+        path.write_text(
+            path.read_text(encoding="utf-8").replace(
+                "[verification-recipe.md](references/verification-recipe.md)",
+                "verification-recipe.md",
+            ),
+            encoding="utf-8",
+        )
+        result = self.validate()
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn("never linked directly", result.stderr)
+
     def test_titled_untracked_runtime_reference_fails(self) -> None:
         extra = self.root / "skills/handoff/references/extra.md"
         extra.write_text("# Extra\n", encoding="utf-8")
