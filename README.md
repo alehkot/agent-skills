@@ -212,6 +212,8 @@ skill. Fenced examples and same-line code spans are not treated as live links.
 The checker handles the bundle's Markdown conventions, not all CommonMark syntax
 (such as reference-style links, HTML links, or Setext headings). The regression
 tests run with the same standard-library-only requirements.
+It also requires each skill's bundled `LICENSE` to match the repository license
+exactly, so the copyright and permission notice survives a standalone install.
 
 For `agents/openai.yaml`, this bundle uses a deliberately small format: one
 `interface:` mapping containing exactly `display_name`, `short_description`, and
@@ -229,4 +231,6 @@ agent's behavior or guarantee task outcomes.
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE). Each skill includes an unchanged copy of this
+license for standalone distribution. Keep all five copies synchronized when
+updating the repository license.

@@ -435,6 +435,64 @@ class BundleIntegrationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("Validated 5 skills", result.stdout)
 
+    def test_standalone_skill_copies_retain_license(self) -> None:
+        expected = (self.root / "LICENSE").read_bytes()
+        with tempfile.TemporaryDirectory() as destination:
+            for name in validator.REFERENCES:
+                with self.subTest(skill=name):
+                    installed = Path(destination) / name
+                    shutil.copytree(self.root / "skills" / name, installed)
+                    self.assertTrue((installed / "SKILL.md").is_file())
+                    self.assertEqual((installed / "LICENSE").read_bytes(), expected)
+            self.assertFalse((Path(destination) / "LICENSE").exists())
+
+    def test_changed_or_empty_skill_license_fails(self) -> None:
+        expected = (self.root / "LICENSE").read_bytes()
+        for name in validator.REFERENCES:
+            path = self.root / "skills" / name / "LICENSE"
+            for content in (b"MIT License\n", b""):
+                with self.subTest(skill=name, content=content):
+                    path.write_bytes(content)
+                    result = self.validate()
+                    self.assertNotEqual(result.returncode, 0, result.stdout)
+                    self.assertIn(f"skills/{name}/LICENSE", result.stderr)
+                    self.assertIn("must match repository LICENSE", result.stderr)
+            path.write_bytes(expected)
+
+    def test_missing_skill_license_fails(self) -> None:
+        expected = (self.root / "LICENSE").read_bytes()
+        for name in validator.REFERENCES:
+            with self.subTest(skill=name):
+                path = self.root / "skills" / name / "LICENSE"
+                path.unlink()
+                result = self.validate()
+                self.assertNotEqual(result.returncode, 0, result.stdout)
+                self.assertIn(f"skills/{name}/LICENSE", result.stderr)
+                path.write_bytes(expected)
+
+    def test_skill_license_must_be_tracked(self) -> None:
+        for name in validator.REFERENCES:
+            with self.subTest(skill=name):
+                path = f"skills/{name}/LICENSE"
+                self.git("rm", "--cached", path)
+                result = self.validate()
+                self.assertNotEqual(result.returncode, 0, result.stdout)
+                self.assertIn("Tracked inventory differs", result.stderr)
+                self.assertIn(path, result.stderr)
+                self.git("add", path)
+
+    def test_root_license_update_requires_resynchronizing_copies(self) -> None:
+        path = self.root / "LICENSE"
+        updated = path.read_bytes() + b"\n"
+        path.write_bytes(updated)
+        result = self.validate()
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn("must match repository LICENSE", result.stderr)
+        for name in validator.REFERENCES:
+            (self.root / "skills" / name / "LICENSE").write_bytes(updated)
+        result = self.validate()
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_verification_recipe_must_be_in_tracked_bundle(self) -> None:
         self.git("rm", "--cached", "skills/review-loop/references/verification-recipe.md")
         result = self.validate()

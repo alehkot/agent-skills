@@ -21,6 +21,7 @@
 !/skills/review-loop/
 /skills/*/*
 !/skills/*/SKILL.md
+!/skills/*/LICENSE
 !/skills/*/agents/
 /skills/*/agents/*
 !/skills/*/agents/openai.yaml

@@ -167,7 +167,7 @@ PUBLIC_FILES = frozenset({
 } | {
     f"skills/{name}/{path}"
     for name, references in REFERENCES.items()
-    for path in ("SKILL.md", "agents/openai.yaml",
+    for path in ("SKILL.md", "LICENSE", "agents/openai.yaml",
                  *(f"references/{reference}" for reference in references))
 })
 
@@ -219,6 +219,15 @@ def check_skill(name: str) -> None:
         raise ValueError(f"{name}: empty description")
     metadata = (path.parent / "agents/openai.yaml").read_text(encoding="utf-8")
     check_interface(name, metadata)
+
+
+def check_license_copies() -> None:
+    """Keep the existing notice in each independently distributable skill."""
+    expected = (ROOT / "LICENSE").read_bytes()
+    for name in REFERENCES:
+        path = ROOT / "skills" / name / "LICENSE"
+        if path.read_bytes() != expected:
+            raise ValueError(f"{path.relative_to(ROOT)}: must match repository LICENSE")
 
 
 def check_interface(name: str, text: str) -> None:
@@ -306,6 +315,7 @@ def check_links(name: str, text: str) -> None:
 
 def main() -> int:
     check_inventory()
+    check_license_copies()
     for name in sorted(PUBLIC_FILES):
         text = (ROOT / name).read_text(encoding="utf-8")
         if "\0" in text:
