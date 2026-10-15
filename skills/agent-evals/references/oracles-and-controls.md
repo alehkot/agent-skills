@@ -50,6 +50,12 @@ an assertion literally may specify conjunction/disjunction; they do not establis
 keyword matching. Read actual code, assertion classes and records before claiming
 a verifier defect. Predicting an LLM verdict is a probe, not an observed failure.
 
+Specify the checker's input boundary. For JSON responses, parse the returned text
+before checking keys, types and values; comparing a supplied dictionary alone
+does not validate serialization. Reject booleans where the contract requires a
+number. Do not replace a semantic requirement with exact wording unless the
+contract requires that wording.
+
 ## Use the smallest decisive control
 
 For a check whose discrimination is uncertain, inspect or exercise a valid result
@@ -64,6 +70,9 @@ the actual expanded mutant. Overlapping assertions may fail together. Label
 compound stress cases separately. Excerpts establish only their named subset;
 if full controls are requested, output their actual content, not replacement
 instructions. A fact still present in a mutant cannot be marked omitted.
+Correcting a compound mutant's verdict vector does not make it a single-defect
+control: write the requested new copy. One causal change may require updating
+several dependent sentences so unchanged text does not contradict the mutant.
 
 Example synthetic draft policy: include the authorized $12,000 offer; omit a
 private $20,000 ceiling and Friday deadline. Assertions are offer included,

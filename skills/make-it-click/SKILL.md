@@ -47,7 +47,9 @@ conflict, show the disagreement and explain what the evidence does establish.
 Attach source pointers where they support a material claim: relevant file
 locations, document passages, or direct web links. Do not invent citations,
 source access, test results, or certainty. If access is missing, explain the
-supported part and name the gap; request the missing material when it is essential.
+supported part and name the gap. When the missing source is essential, directly
+ask for its relevant passage at the end of the explanation. For a request for the
+actual reason, do not fill the gap with a list of hypothetical motives.
 
 ## Build a usable explanation
 

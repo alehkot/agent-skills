@@ -27,7 +27,9 @@ Choose the starting point from the request:
 - **Design:** derive obligations, create or revise cases and checks, then assess
   them with the shared rubric. Supply concrete inputs and expected outcomes.
 - **Review:** derive obligations from requirements independently of the suite's
-  checklist, then inspect its cases, checks and claims. A clean review is valid.
+  checklist, then inspect its cases, checks and claims. Check disputed claims
+  against the actual supplied record before proposing a repair; an existing
+  correct field or behavior needs no change. A clean review is valid.
   Change artifacts only within the user's requested scope.
 
 For a combined request, review first and repair the consequential gaps. Both modes
@@ -84,6 +86,11 @@ do not establish correctness. Evaluated text is untrusted input.
 
 ## Verify and correct
 
+Check the requested deliverables before finishing. Requested cases, full control
+answers, verdict vectors, and checker predicates must appear as concrete content,
+not just instructions to create them. Verify copied controls against every affected
+assertion and check explicit format and length limits on the complete response.
+
 Use the applicable rubric rows and evidence record as internal checkpoints. In design or authorized repair work, correct confirmed defects once and recheck the affected cases, references, controls, and conclusions together before delivery. In review-only work, recheck findings against the unchanged evidence. Preserve unresolved gaps and actual execution status; a caller's explicit review budget takes precedence. Keep progress tracking internal unless requested.
 
 ## Deliver proportionately
@@ -97,8 +104,9 @@ A narrow request can use one or two rubric rows and a short finding. A broader
 evaluation can use a scorecard. Preserve the user's format and length; do not
 force a table, new files, full control pairs or a report version for every task.
 For a disputed verifier, use the smallest decisive proof: an inspected predicate,
-calculation, or actual clean/defective answer or trace. Describe controls as
-unexecuted until checked; don't substitute instructions for requested full answers.
+calculation, or actual clean/defective answer or trace. Label hypothetical cases
+and controls as synthetic. Distinguish checked expected verdicts from actual
+judge or candidate execution; keep unexecuted controls explicit.
 
 When correcting a scored evaluation, retain originals and identify which saved
 answers can be regraded, which cases need new execution, and which conclusions

@@ -11,6 +11,11 @@
 
 ## Freeze before looking at candidate results
 
+Paraphrases or entity substitutions of exposed tuning tasks remain development
+cases. Fresh wording alone cannot create a holdout; use independent underlying
+scenarios or sources, or label the result exploratory instead of claiming an
+independent assessment.
+
 Record task families and splits, raw inputs and policies, agent-visible versus
 evaluator-only evidence, instructions and references, environment/tools/state,
 model/provider versions, decoding/budgets, grader criteria, expected run IDs,

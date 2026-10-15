@@ -33,8 +33,11 @@ or consequences. Do not impose a universal questionnaire on every task.
 ## Keep asking
 
 1. Pick the most consequential unresolved decision whose prerequisites are known.
-   Ask one difficult question, or up to three independent questions in a round.
-   A question that depends on an unanswered one belongs in a later round.
+   When the user identifies an upstream choice, ask them to resolve that choice
+   first. Record its dependent choices as open and wait; do not bundle them into
+   a question about the prerequisite. Otherwise ask one difficult question, or
+   up to three questions that can each be answered independently. A recommendation
+   does not settle a prerequisite.
 2. Attach a recommended answer and a short reason. Offer meaningful alternatives
    when useful. Label the recommendation as a proposal, not the user's decision.
 3. Follow the answer into its implications. Use counterexamples, concrete
@@ -42,15 +45,17 @@ or consequences. Do not impose a universal questionnaire on every task.
    Ask what ambiguous terms mean in practice and expose contradictions with
    earlier answers or inspected sources. Do not accept slogans as specifications.
 4. Record what changed, including why a choice was made, and recompute the
-   remaining branches. Reopen a decision when new evidence undermines it;
-   otherwise do not repeatedly relitigate a settled choice.
+   remaining branches. Reopen a decision when new evidence undermines it, keeping
+   the prior approval under review until a replacement is confirmed or delegated.
+   Otherwise do not repeatedly relitigate a settled choice.
 5. Continue with the next hard, relevant questions. There is **no round limit or
    interview time limit**. One to three questions is the size of a round, never a
    session limit. A confidence percentage or several agreeable answers is not a
    stopping rule.
 
 Use the host's question UI when available. Respect the user's pace and direct
-answers. If the user delegates a choice, make it and record the delegation;
+answers. If the user delegates a choice, choose and record the value, your reason,
+and the user's delegation. Record an explicitly accepted default as a decision;
 do not require a ritual phrase or reinterpret clear agreement as reluctance.
 If progress stalls, change the framing or seek evidence rather than repeating
 the same question. When the user is unavailable, leave unanswered decisions
@@ -67,9 +72,10 @@ its established scratch-note or decision-log convention when clear. Otherwise
 use a unique OS temporary directory. Announce the actual path. Do not create
 permanent repository documentation or silently promote scratch notes to facts.
 
-If writes are forbidden or unavailable, say the log is conversation-only and
-maintain it there. Do not claim it was saved. Preserve user corrections and
-superseded decisions; a compact current summary can accompany the history.
+If writes are forbidden or unavailable, keep new updates in the conversation.
+Retain any existing log path and readback-confirmed saved state; distinguish that
+prior evidence from updates not yet saved. With no saved log, disclose that it is
+conversation-only. Preserve user corrections and superseded decisions.
 
 ## Stop honestly
 

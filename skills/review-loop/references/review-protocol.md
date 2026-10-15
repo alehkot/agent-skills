@@ -67,6 +67,8 @@ clean review and all required checks finish before the deadline. If pass ten
 finds issues, fixes alone cannot satisfy the mandatory subsequent clean review.
 Return LIMIT_REACHED, listing any repairs not yet re-reviewed. A result arriving
 at or after the deadline is too late to establish a within-budget pass.
+Retain late reviews and checks as dated evidence for a future authorized
+continuation; separate their findings from the missed-budget result.
 
 On explicit extension, retain Started and used passes. Translate "five more
 passes" into a new total cap of used passes plus five; "ten more minutes" into

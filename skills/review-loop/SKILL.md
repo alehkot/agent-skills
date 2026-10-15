@@ -112,5 +112,9 @@ lifecycle rules. An automatic continuation after a terminal non-pass must read
 and honor that result without spending another review budget.
 
 Finish with the result, scope, threshold, actual time/passes used, findings,
-verification evidence, reviewer mode, log path, and next action. A pass states
-the review's scope and limitations; it is not a claim that no defects can exist.
+verification evidence, reviewer mode, log path, and next action. Calculate elapsed
+time from the recorded start to the current or reported completion time, including
+overruns; report it separately from the allowed duration. Even in a short result,
+retain supplied remaining time separately from an exhausted pass count.
+A pass states the review's scope and limitations; it is not a claim that no
+defects can exist.

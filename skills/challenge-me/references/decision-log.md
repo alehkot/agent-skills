@@ -73,7 +73,7 @@ turn announces the log path; later turns can simply report material updates.
 Question: <one difficult question, or up to three independent questions>
 Recommendation: <answer and rationale; explicitly open to disagreement>
 Decision log: <actual path and update, or conversation-only because ...>
-Open questions: <the remaining material branch, without dumping the whole map>
+Open questions: <the unresolved prerequisite and dependent choices deferred until its answer>
 ```
 
 ## Closing brief
