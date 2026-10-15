@@ -215,6 +215,19 @@ tests run with the same standard-library-only requirements.
 It also requires each skill's bundled `LICENSE` to match the repository license
 exactly, so the copyright and permission notice survives a standalone install.
 
+For `SKILL.md` frontmatter, the checker recognizes the entire header using a
+small repository convention: exactly one unquoted `name` and `description` field,
+with `name: <directory-name>`. Descriptions use either `>-` followed by a single
+paragraph of nonblank lines indented exactly two spaces, or a single-line
+JSON-compatible double-quoted string. Folded lines join with one space; decoded
+descriptions must be nonblank, 1–1024 characters, and contain no controls or
+Unicode line/paragraph separators. Field order, blank lines, and whole-line
+column-zero comments outside the folded paragraph may vary. Comments within a folded
+paragraph are literal description text. Unsupported YAML forms (including plain
+or single-quoted descriptions, other block styles, and quoted keys) are rejected;
+this is not a general YAML parser. Extend the checker and tests before changing
+that convention. All published skill descriptions use the folded form.
+
 For `agents/openai.yaml`, this bundle uses a deliberately small format: one
 `interface:` mapping containing exactly `display_name`, `short_description`, and
 `default_prompt`, each indented two spaces with a nonblank, single-line

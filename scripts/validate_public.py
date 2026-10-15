@@ -202,21 +202,79 @@ def check_inventory() -> None:
             raise ValueError(f"{name}: expected an ordinary file without symlinks")
 
 
+def parse_skill_frontmatter(name: str, text: str) -> str:
+    """Decode this repository's small frontmatter subset, not general YAML.
+
+    Folded descriptions are one paragraph of exactly two-space-indented lines.
+    JSON-compatible quoted descriptions provide an unambiguous single-line form.
+    Recognize the whole header so an ignored key or YAML tail cannot pass checks.
+    """
+    lines = text.split("\n")
+    if not lines or lines[0] != "---" or "---" not in lines[1:]:
+        raise ValueError(f"{name}: missing YAML frontmatter")
+    header = lines[1:lines.index("---", 1)]
+    if any(
+        (unicodedata.category(char) in {"Cc", "Cs", "Zl", "Zp"})
+        or char in "\ufffe\uffff"
+        for line in header for char in line
+    ):
+        raise ValueError(f"{name}: unexpected non-printable character in frontmatter")
+    values: dict[str, str] = {}
+    index = 0
+    while index < len(header):
+        line = header[index]
+        index += 1
+        if not line.strip(" ") or line.startswith("#"):
+            continue
+        field = re.fullmatch(r"(name|description): (.+)", line)
+        if field is None:
+            raise ValueError(f"{name}: unsupported frontmatter line {index}")
+        key, scalar = field.groups()
+        if key in values:
+            raise ValueError(f"{name}: duplicate frontmatter field {key}")
+        if key == "name":
+            if scalar != name:
+                raise ValueError(f"{name}: metadata name must match its directory")
+            value = scalar
+        elif scalar == ">-":
+            paragraph = []
+            while index < len(header) and header[index].startswith("  "):
+                content = header[index][2:]
+                if not content or content[0].isspace():
+                    raise ValueError(
+                        f"{name}: folded description needs nonblank lines "
+                        "with exactly two-space indentation"
+                    )
+                paragraph.append(content)
+                index += 1
+            value = " ".join(paragraph)
+        else:
+            if not scalar.startswith('"'):
+                raise ValueError(
+                    f"{name}: description must use >- or a JSON-quoted string"
+                )
+            try:
+                value = json.loads(scalar)
+            except json.JSONDecodeError as exc:
+                raise ValueError(f"{name}: invalid quoted description") from exc
+        values[key] = value
+    if set(values) != {"name", "description"}:
+        raise ValueError(f"{name}: expected name and description metadata")
+    description = values["description"]
+    if not description.strip() or not 1 <= len(description) <= 1024:
+        raise ValueError(f"{name}: description must be nonblank text of 1-1024 characters")
+    if any(
+        unicodedata.category(char) in {"Cc", "Cs", "Zl", "Zp"}
+        or char in "\ufffe\uffff"
+        for char in description
+    ):
+        raise ValueError(f"{name}: description must be single-line text without controls")
+    return description
+
+
 def check_skill(name: str) -> None:
     path = ROOT / "skills" / name / "SKILL.md"
-    text = path.read_text(encoding="utf-8")
-    match = re.match(r"\A---\n(.*?)\n---\n", text, re.DOTALL)
-    if not match:
-        raise ValueError(f"{path.relative_to(ROOT)}: missing YAML frontmatter")
-    header = match.group(1)
-    keys = re.findall(r"^([a-z][a-z_-]*):", header, re.MULTILINE)
-    if sorted(keys) != ["description", "name"]:
-        raise ValueError(f"{name}: expected only name and description metadata")
-    if not re.search(rf"^name: {re.escape(name)}$", header, re.MULTILINE):
-        raise ValueError(f"{name}: metadata name must match its directory")
-    description = re.search(r"^description: (.+(?:\n[ \t]+.*)*)", header, re.MULTILINE)
-    if not description or not description.group(1).replace(">-", "").strip():
-        raise ValueError(f"{name}: empty description")
+    parse_skill_frontmatter(name, path.read_text(encoding="utf-8"))
     metadata = (path.parent / "agents/openai.yaml").read_text(encoding="utf-8")
     check_interface(name, metadata)
 
