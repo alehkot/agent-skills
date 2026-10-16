@@ -249,7 +249,7 @@ class InterfaceMetadataTests(unittest.TestCase):
         self.skill = self.root / "skills/handoff"
         (self.skill / "agents").mkdir(parents=True)
         (self.skill / "SKILL.md").write_text(
-            "---\nname: handoff\ndescription: Prepare a continuation prompt.\n---\n",
+            "---\nname: handoff\ndescription: \"Prepare a continuation prompt.\"\n---\n",
             encoding="utf-8",
         )
         self.metadata = self.skill / "agents/openai.yaml"
@@ -397,6 +397,113 @@ class InterfaceMetadataTests(unittest.TestCase):
                 self.check(text)
 
 
+class FrontmatterTests(unittest.TestCase):
+    def document(self, description: str = '"A continuation prompt."') -> str:
+        return f"---\nname: handoff\ndescription: {description}\n---\n# Handoff\n"
+
+    def check(self, text: str) -> str:
+        return validator.parse_skill_frontmatter("handoff", text)
+
+    def test_all_published_frontmatter_is_supported(self) -> None:
+        for name in validator.REFERENCES:
+            with self.subTest(skill=name):
+                text = (validator.ROOT / "skills" / name / "SKILL.md").read_text()
+                self.assertTrue(validator.parse_skill_frontmatter(name, text))
+
+    def test_json_strings_decode_quotes_backslashes_and_unicode(self) -> None:
+        for value in ('Use "quoted" text and \\paths.', "Café 😀", "# literal: text"):
+            with self.subTest(value=value):
+                self.assertEqual(self.check(self.document(json.dumps(value))), value)
+
+    def test_folded_paragraph_decodes_like_yaml(self) -> None:
+        self.assertEqual(
+            self.check(self.document(">-\n  First line.\n  Second line.\n  # Literal content.")),
+            "First line. Second line. # Literal content.",
+        )
+
+    def test_fields_can_be_reordered_with_outside_comments_and_blank_lines(self) -> None:
+        self.assertEqual(self.check(
+            '---\n# Before\ndescription: >-\n  A prompt.\n\n# Between\n'
+            'name: handoff\n# After\n\n---\n'
+        ), "A prompt.")
+
+    def test_decoded_description_length_boundaries(self) -> None:
+        for length in (1, 1024):
+            for scalar in (json.dumps("é" * length), ">-\n  " + "é" * length):
+                with self.subTest(length=length, scalar=scalar):
+                    self.assertEqual(len(self.check(self.document(scalar))), length)
+        for scalar in (json.dumps("x" * 1025), ">-\n  " + "x" * 512 + "\n  " + "x" * 512):
+            with self.subTest(scalar=scalar), self.assertRaisesRegex(ValueError, "1-1024"):
+                self.check(self.document(scalar))
+
+    def test_empty_and_whitespace_descriptions_fail(self) -> None:
+        for scalar in ('""', '"   "', '"\\u00a0"', ">-", ">-\n  "):
+            with self.subTest(scalar=scalar), self.assertRaises(ValueError):
+                self.check(self.document(scalar))
+
+    def test_unsupported_scalar_styles_and_types_fail(self) -> None:
+        for scalar in ("null", "true", "123", "[a, b]", "{a: b}", "'text'",
+                       "plain text", "# comment", "|\n  text", ">\n  text",
+                       "&anchor text", "*alias", "!!str text"):
+            with self.subTest(scalar=scalar), self.assertRaises(ValueError):
+                self.check(self.document(scalar))
+
+    def test_malformed_json_and_trailing_yaml_fail(self) -> None:
+        for scalar in ('"unterminated', '"bad\\q"', '"ok" trailing', '"ok" # comment'):
+            with self.subTest(scalar=scalar), self.assertRaises(ValueError):
+                self.check(self.document(scalar))
+
+    def test_duplicate_unknown_quoted_and_stray_header_lines_fail(self) -> None:
+        for extra in ('name: handoff', 'description: "Other"', '"name": other',
+                      "'description': override", 'extra: value', '"extra": value',
+                      'garbage', '  nested: value', '---oops'):
+            text = self.document().replace('\n---\n#', f'\n{extra}\n---\n#')
+            with self.subTest(extra=extra), self.assertRaises(ValueError):
+                self.check(text)
+
+    def test_missing_fields_and_wrong_name_fail(self) -> None:
+        for text in (self.document().replace('name: handoff\n', ''),
+                     self.document().replace('description: "A continuation prompt."\n', ''),
+                     self.document().replace('name: handoff', 'name: other'),
+                     self.document().replace('name: handoff', 'name: "handoff"')):
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                self.check(text)
+
+    def test_invalid_delimiters_fail(self) -> None:
+        for text in (self.document().replace('---', '----', 1),
+                     self.document().replace('\n---\n', '\n---tail\n'),
+                     self.document().replace('\n---\n', '\n'),
+                     'prefix\n' + self.document()):
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                self.check(text)
+
+    def test_ambiguous_folded_indentation_or_multiple_paragraphs_fail(self) -> None:
+        for scalar in ('>-\n text', '>-\n   text', '>-\n\ttext',
+                       '>-\n  first\n\n  second', '>-\n  first\n# comment\n  second',
+                       '>-\n  first\n\n  # hidden continuation',
+                       '>-\n  first\n\n  # ' + 'x' * 1025):
+            with self.subTest(scalar=scalar), self.assertRaises(ValueError):
+                self.check(self.document(scalar))
+
+    def test_indented_comment_after_blank_cannot_bypass_description_limit(self) -> None:
+        for separator in ("", " ", "  "):
+            for indent in ("  ", "   ", "    "):
+                for content in ("# second", "# " + "x" * 1025):
+                    scalar = f">-\n  first\n{separator}\n{indent}{content}"
+                    with self.subTest(scalar=scalar), self.assertRaises(ValueError):
+                        self.check(self.document(scalar))
+
+    def test_raw_and_decoded_controls_cannot_create_field_boundaries(self) -> None:
+        for char in ('\t', '\x00', '\x85', '\u2028', '\u2029', '\ud800', '\ufffe', '\uffff'):
+            for scalar in ('"before' + char + 'after"', json.dumps('before' + char + 'after')):
+                with self.subTest(scalar=scalar), self.assertRaises(ValueError):
+                    self.check(self.document(scalar))
+
+    def test_markdown_body_is_not_parsed_as_frontmatter(self) -> None:
+        self.assertEqual(self.check(self.document() + '\n---\n"name": other\n'),
+                         "A continuation prompt.")
+
+
 class BundleIntegrationTests(unittest.TestCase):
     """Exercise the command on real tracked files in an isolated checkout."""
 
@@ -434,6 +541,33 @@ class BundleIntegrationTests(unittest.TestCase):
         result = self.validate()
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("Validated 5 skills", result.stdout)
+
+    def replace_frontmatter(self, header: str) -> None:
+        path = self.root / "skills/handoff/SKILL.md"
+        text = path.read_text(encoding="utf-8")
+        body = text.split("\n---\n", 1)[1]
+        path.write_text("---\n" + header + "\n---\n" + body, encoding="utf-8")
+
+    def test_empty_quoted_description_fails_cli(self) -> None:
+        self.replace_frontmatter('name: handoff\ndescription: ""')
+        self.assertNotEqual(self.validate().returncode, 0)
+
+    def test_malformed_description_fails_cli(self) -> None:
+        self.replace_frontmatter('name: handoff\ndescription: "unterminated')
+        self.assertNotEqual(self.validate().returncode, 0)
+
+    def test_quoted_duplicate_name_fails_cli(self) -> None:
+        self.replace_frontmatter('name: handoff\ndescription: "A prompt."\n"name": other')
+        self.assertNotEqual(self.validate().returncode, 0)
+
+    def test_oversized_description_fails_cli(self) -> None:
+        self.replace_frontmatter('name: handoff\ndescription: ' + json.dumps("x" * 1025))
+        self.assertNotEqual(self.validate().returncode, 0)
+
+    def test_json_quoted_description_passes_cli(self) -> None:
+        self.replace_frontmatter('name: handoff\ndescription: "A continuation prompt."')
+        result = self.validate()
+        self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_standalone_skill_copies_retain_license(self) -> None:
         expected = (self.root / "LICENSE").read_bytes()
