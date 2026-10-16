@@ -44,6 +44,15 @@ Restart:
   Refresh time-sensitive or changed task state as needed; do not erase completed
   verification merely because this session cannot repeat it. A requirement or
   reported inventory count is not a test result.
+- **Attempted or running operations:** preserve the target, original parameters,
+  last observed state/time when known, durable request/job reference, existing
+  owner, and available status or recovery route. Start by reconciling unknown
+  effects or observing existing work before repeating an operation. Carry a
+  known retry/idempotency contract exactly; do not infer one from a timeout.
+  If no safe recovery route is known, retain the uncertainty and blocked replay
+  decision. A session-local handle is not automatically usable after a restart.
+  Ordinary unstarted actions can proceed within their existing authorization,
+  retaining necessary current-state checks without speculative recovery detours.
 - **Temporary notes:** embed essential decisions and the next action as well as
   linking the note, so its disappearance does not prevent a useful restart.
 - **Permissions:** preserve prior authorization and its scope without requesting

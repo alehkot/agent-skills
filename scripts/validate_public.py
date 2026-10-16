@@ -164,6 +164,7 @@ REFERENCES = {
 PUBLIC_FILES = frozenset({
     ".gitignore", ".github/workflows/validate.yml", "LICENSE", "README.md",
     "scripts/validate_public.py", "scripts/test_validate_public.py",
+    "evals/handoff-recovery.md",
 } | {
     f"skills/{name}/{path}"
     for name, references in REFERENCES.items()

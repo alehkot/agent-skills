@@ -84,6 +84,11 @@ history. The prompt preserves essential decisions even if a temporary note is
 lost, and directs the receiving agent to verify current state before acting.
 It does not launch an agent or transfer a runtime's goal object.
 
+Attempts with unknown outcomes and operations still running are preserved as
+such, with known request/job references and recovery routes. The restart checks
+existing effects before repeating an operation; a timeout is not proof of failure.
+This is continuation guidance, not an exactly-once execution mechanism.
+
 ## Review until the gate passes
 
 Use the same gate for code, documents, slide decks, analyses, knowledge bases,
@@ -241,6 +246,12 @@ This is a repository convention, not the full Codex/YAML schema. Extend the
 checker and its tests before adding other metadata fields or YAML forms.
 A clean check confirms these structural properties; it does not measure an
 agent's behavior or guarantee task outcomes.
+
+Targeted synthetic [handoff recovery cases](evals/handoff-recovery.md) cover
+uncertain outcomes, running work, supported retries, and ordinary continuation.
+They are manual behavioral fixtures with expected observations, not tests run by
+the bundle checker. Use isolated fresh sessions and retain the generated prompts
+when evaluating them; passing structural checks alone does not pass these cases.
 
 ## License
 

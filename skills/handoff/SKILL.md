@@ -23,8 +23,15 @@ task-owned changes from pre-existing work. When inspection is unavailable, use
 supplied evidence with its provenance; do not invent a missing file or tool.
 
 Preserve the original objective, accepted corrections, decisions and delegated
-choices. Separate completed, partial and pending work. A requirement belongs in
-constraints, a reported fact in state, and an executed check in verification.
+choices. Separate completed, partial and pending work. Distinguish unstarted
+actions from attempts with unknown outcomes and operations still running. For
+those operations, retain the affected target, relevant original parameters,
+last observed state and time when known, durable request/job reference, and
+available status check or supported recovery route. Name any worker still owning
+the operation; do not imply a session-local handle transfers to the next agent.
+
+A requirement belongs in constraints, a reported fact in state, and an executed
+check in verification.
 An accepted scope decision or a reported count is not a passed check. Name a gap
 only when it affects continuation; do not run expensive checks to fill a template.
 
@@ -42,8 +49,16 @@ Keep commands, source pointers, permissions and spent limits exact. Do not add
 new policies, approvals or acceptance conditions to make the prompt look complete.
 
 Start the restart sequence with the pending operation and its artifact, folding
-necessary inspection into that action. For an active review budget, check the
-actual clock and existing log first. State the current gate status and remaining
+necessary inspection into that action. If an attempt may already have taken
+effect or is still running, first reconcile its state or observe the existing
+work instead of blindly repeating it. A timeout does not prove that nothing
+happened. Preserve any known retry/idempotency contract and its exact parameters;
+do not invent a safe retry, status tool, or receipt. If the outcome cannot be
+resolved safely, keep that uncertainty and the blocked replay decision explicit.
+For unstarted authorized actions, retain necessary current-state checks without
+adding speculative recovery detours.
+
+For an active review budget, check the actual clock and existing log first. State the current gate status and remaining
 allowance, not merely the conditions for a future pass. Preserve the original
 task's scope and required review of the final state.
 

@@ -1,4 +1,4 @@
-# Only the distributable bundle is versioned.
+# Only the distributable bundle and its checks are versioned.
 /*
 !/.gitignore
 !/LICENSE
@@ -12,6 +12,9 @@
 /scripts/*
 !/scripts/validate_public.py
 !/scripts/test_validate_public.py
+!/evals/
+/evals/*
+!/evals/handoff-recovery.md
 !/skills/
 /skills/*
 !/skills/agent-evals/
