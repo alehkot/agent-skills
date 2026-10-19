@@ -15,6 +15,7 @@
 !/evals/
 /evals/*
 !/evals/handoff-recovery.md
+!/evals/challenge-me-limits.md
 !/skills/
 /skills/*
 !/skills/agent-evals/

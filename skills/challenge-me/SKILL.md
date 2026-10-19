@@ -5,7 +5,8 @@ description: >-
   plan, design, or decision. Use for an interactive interview to expose assumptions,
   resolve ambiguities, test alternatives, or push back on vague requirements.
   Keep a Markdown decision log and continue questioning until the user stops or
-  the overall picture is clear. Applies to code, documents, and knowledge bases.
+  the overall picture is clear, honoring explicit user interview limits. Applies to
+  code, documents, and knowledge bases.
 ---
 
 # Challenge Me
@@ -48,10 +49,11 @@ or consequences. Do not impose a universal questionnaire on every task.
    remaining branches. Reopen a decision when new evidence undermines it, keeping
    the prior approval under review until a replacement is confirmed or delegated.
    Otherwise do not repeatedly relitigate a settled choice.
-5. Continue with the next hard, relevant questions. There is **no round limit or
-   interview time limit**. One to three questions is the size of a round, never a
-   session limit. A confidence percentage or several agreeable answers is not a
-   stopping rule.
+5. Continue with the next hard, relevant questions. There is **no default round
+   limit or interview time limit**; honor any explicit limit the user supplies.
+   One to three questions is the size of a round, not a default session limit.
+   Check the remaining allowance before starting another round. A confidence
+   percentage or several agreeable answers is not a stopping rule.
 
 Use the host's question UI when available. Respect the user's pace and direct
 answers. If the user delegates a choice, choose and record the value, your reason,
@@ -79,10 +81,14 @@ conversation-only. Preserve user corrections and superseded decisions.
 
 ## Stop honestly
 
-Continue until either:
+Continue until one of these conditions applies:
 
 - **The user says stop:** stop the interview immediately. Return the settled
   decisions and remaining questions, labeled **stopped**, not fully resolved.
+- **An explicit user limit is reached:** end the interview without another
+  question. If material branches remain unresolved, return a **stopped** brief
+  that preserves them; exhausting the allowance does not make the picture clear.
+  Resume only when the user requests it, within any new allowance they specify.
 - **The overall picture is clear:** all material branches within the agreed
   scope have been addressed; terminology, consequences, acceptance criteria,
   and dependencies are clear; no blocking contradiction or ambiguity remains.
