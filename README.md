@@ -29,10 +29,12 @@ I want a personal resource finder, but I am not sure which problem it should sol
 ```
 
 The skill reads discoverable facts first, then asks one difficult question or up
-to three independent questions per round. There is no interview round or time
-limit. It follows implications and revisits contradictions instead of stopping
-at the first plausible answer. A user stop produces a partial brief with open
-questions; a clear result requires the material branches to be resolved.
+to three independent questions per round. There is no default interview round or
+time limit; explicit user limits are honored and retained on resume. It follows
+implications and revisits contradictions instead of stopping at the first
+plausible answer. A user stop or an exhausted allowance with unresolved branches
+produces a partial brief with open questions; a clear result requires the material
+branches to be resolved.
 
 An explicit output path wins. In a file-based knowledge base, the skill follows
 an established scratch-note or decision-log convention. Otherwise it uses a
@@ -252,6 +254,10 @@ uncertain outcomes, running work, supported retries, and ordinary continuation.
 They are manual behavioral fixtures with expected observations, not tests run by
 the bundle checker. Use isolated fresh sessions and retain the generated prompts
 when evaluating them; passing structural checks alone does not pass these cases.
+
+[Challenge-me interview-limit cases](evals/challenge-me-limits.md) cover explicit
+round/time limits and continuation controls. They are also manual behavioral
+fixtures, not automated checks of agent behavior.
 
 ## License
 

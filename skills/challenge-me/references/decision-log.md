@@ -37,6 +37,7 @@ Updated: <timestamp with timezone>
 Status: interviewing | clear | stopped | blocked
 Objective and scope: <outcome, boundaries, intended audience>
 Success: <observable criteria, or the unresolved question>
+Interview limit: <explicit user limit and used/remaining rounds or deadline, if supplied>
 
 ## Current understanding
 <Short model of the problem and important terminology.>
@@ -57,6 +58,11 @@ Success: <observable criteria, or the unresolved question>
 ## Change log
 - <timestamp> — <decision added, corrected, or superseded, and why>.
 ```
+
+Preserve an explicit interview limit and known progress when resuming; a new
+session does not reset it. For a time limit, retain the established deadline and
+check the actual clock before another round. Do not invent missing elapsed time
+or round counts; reconcile available conversation/log evidence first.
 
 Record concise conclusions and reasons, not a transcript. Never upgrade a
 recommendation to a confirmed decision because the user did not answer it.
@@ -86,6 +92,7 @@ Open questions: <remaining questions/deferrals; none only when supported>
 Decision log: <actual path, or conversation-only with persistence limitation>
 ```
 
-When stopped, do not append a new interview question or resume questioning on
-the next automatic continuation. Resume only when the user requests it. When
-clear, do not add filler questions merely to display skepticism.
+When stopped, including at an explicit user limit, do not append a new interview
+question or resume questioning on the next automatic continuation. Resume only
+when the user requests it. When clear, do not add filler questions merely to
+display skepticism.
