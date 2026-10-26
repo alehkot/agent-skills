@@ -119,6 +119,15 @@ checks findings, fixes confirmed issues, and reruns appropriate verification.
 A passing result requires a clean review of the final state and current evidence
 for the original acceptance criteria. Repeated unresolved issues still block.
 
+Code, configuration, schema, and dependency reviews include
+[blast-radius checks](skills/review-loop/references/blast-radius.md): trace
+relevant downstream effects, identify the assumptions that determine safety,
+and check them against source or execution evidence. The reviewer remains
+read-only; the main agent runs probes that require writes or side effects under
+the task's existing authorization. Confirmed defects, cleared risks, and missing
+evidence stay distinct. These checks use the same scope, severity gate, and budget;
+they add no pstack dependency or mandatory full-app run.
+
 For checks with setup or several steps, an optional
 [verification recipe](skills/review-loop/references/verification-recipe.md)
 ties the actual artifact to a user path or inspection surface, preconditions,
@@ -258,6 +267,10 @@ when evaluating them; passing structural checks alone does not pass these cases.
 [Challenge-me interview-limit cases](evals/challenge-me-limits.md) cover explicit
 round/time limits and continuation controls. They are also manual behavioral
 fixtures, not automated checks of agent behavior.
+
+[Review-loop blast-radius cases](evals/review-loop-blast-radius.md) cover downstream
+contracts, evidence limits, read-only reviewers, clean changes, and existing
+review-budget boundaries. These are manual behavioral fixtures too.
 
 ## License
 

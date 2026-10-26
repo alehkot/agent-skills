@@ -16,6 +16,7 @@
 /evals/*
 !/evals/handoff-recovery.md
 !/evals/challenge-me-limits.md
+!/evals/review-loop-blast-radius.md
 !/skills/
 /skills/*
 !/skills/agent-evals/
@@ -41,3 +42,4 @@
 !/skills/make-it-click/references/learning-patterns.md
 !/skills/review-loop/references/review-protocol.md
 !/skills/review-loop/references/verification-recipe.md
+!/skills/review-loop/references/blast-radius.md

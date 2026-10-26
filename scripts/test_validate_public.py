@@ -627,25 +627,31 @@ class BundleIntegrationTests(unittest.TestCase):
         result = self.validate()
         self.assertEqual(result.returncode, 0, result.stderr)
 
-    def test_verification_recipe_must_be_in_tracked_bundle(self) -> None:
-        self.git("rm", "--cached", "skills/review-loop/references/verification-recipe.md")
-        result = self.validate()
-        self.assertNotEqual(result.returncode, 0, result.stdout)
-        self.assertIn("Tracked inventory differs", result.stderr)
-        self.assertIn("skills/review-loop/references/verification-recipe.md", result.stderr)
+    def test_review_references_must_be_in_tracked_bundle(self) -> None:
+        for reference in validator.REFERENCES["review-loop"]:
+            with self.subTest(reference=reference):
+                path = f"skills/review-loop/references/{reference}"
+                self.git("rm", "--cached", path)
+                result = self.validate()
+                self.assertNotEqual(result.returncode, 0, result.stdout)
+                self.assertIn("Tracked inventory differs", result.stderr)
+                self.assertIn(path, result.stderr)
+                self.git("add", path)
 
-    def test_verification_recipe_requires_direct_entrypoint_link(self) -> None:
+    def test_review_references_require_direct_entrypoint_link(self) -> None:
         path = self.root / "skills/review-loop/SKILL.md"
-        path.write_text(
-            path.read_text(encoding="utf-8").replace(
-                "[verification-recipe.md](references/verification-recipe.md)",
-                "verification-recipe.md",
-            ),
-            encoding="utf-8",
-        )
-        result = self.validate()
-        self.assertNotEqual(result.returncode, 0, result.stdout)
-        self.assertIn("never linked directly", result.stderr)
+        original = path.read_text(encoding="utf-8")
+        for reference in validator.REFERENCES["review-loop"]:
+            with self.subTest(reference=reference):
+                path.write_text(
+                    original.replace(
+                        f"[{reference}](references/{reference})", reference,
+                    ),
+                    encoding="utf-8",
+                )
+                result = self.validate()
+                self.assertNotEqual(result.returncode, 0, result.stdout)
+                self.assertIn("never linked directly", result.stderr)
 
     def test_titled_untracked_runtime_reference_fails(self) -> None:
         extra = self.root / "skills/handoff/references/extra.md"

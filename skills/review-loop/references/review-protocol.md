@@ -60,6 +60,8 @@ Use actual clock readings, not an estimate of model tokens. Start time and pass
 count belong to the run, not the conversation. Record each attempted reviewer
 invocation before starting it; a timeout or fallback retry is another pass.
 Only the orchestrator writes this log. Preserve prior evidence when correcting it.
+For code reviews, include relevant consumers, decisive assumptions, and confirmed,
+cleared, or unresolved consequences in the coverage and verification records.
 
 A pass admitted before the limit may finish within the remaining allowance.
 Reaching pass ten prevents pass eleven; pass ten can still yield PASS if the
@@ -92,10 +94,15 @@ Read applicable instructions and enough source context to assess the whole scope
 For knowledge work, check source grounding, reasoning, completeness, and fit for
 the intended audience and purpose. Inspect the actual rendered result for
 readability and layout when relevant; do not infer these from source text alone.
+For code, configuration, schema, or dependency changes, follow the supplied
+blast-radius guidance. Trace relevant downstream effects and check the evidence
+for decisive assumptions. Return any probe that requires writes or side effects
+to the main agent as a proposed check, not an executed result.
 
 Task and acceptance criteria: <user requirements and accepted decisions>
 Scope and baseline: <all relevant changes/artifacts, not only the last fix>
 Sources and checks: <paths and commands; verify their meaning and current results>
+Code-impact guidance, when applicable: <skill-local blast-radius.md path>
 Verification records, if used: <planned vs executed checks, artifact identity,
 observations, retained evidence, and gaps; not just verdict labels>
 Severity threshold: <effective threshold and definitions>

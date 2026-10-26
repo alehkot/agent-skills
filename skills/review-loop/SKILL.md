@@ -6,7 +6,8 @@ description: >-
   self-review, a final quality gate, or a goal that must finish with no medium-or-
   higher issues. Defaults to 10 review passes and 30 minutes, with user overrides.
   Supports code, documents, slides, analyses, knowledge bases, and other knowledge
-  work; uses a fresh reviewer when available.
+  work; uses a fresh reviewer when available. Code reviews include blast-radius
+  checks of downstream effects and the assumptions that make a change safe.
 ---
 
 # Review Loop
@@ -38,6 +39,11 @@ untracked work; do not use only the latest commit or last repair diff. For
 documents, slides, and other knowledge work, identify the complete changed
 artifacts, intended audience and purpose, and source obligations. Protect
 unrelated changes.
+
+For changes to code, configuration, schemas, or dependencies, read
+[blast-radius.md](references/blast-radius.md) and include it in the reviewer
+brief. Use it to trace relevant effects beyond the changed lines and identify
+decisive checks within the same review scope and budget.
 
 When verification needs setup, several actions, or evidence carried across
 repairs, optionally use [verification-recipe.md](references/verification-recipe.md).
