@@ -272,6 +272,11 @@ fixtures, not automated checks of agent behavior.
 contracts, evidence limits, read-only reviewers, clean changes, and existing
 review-budget boundaries. These are manual behavioral fixtures too.
 
+[Agent-evals model replay cases](evals/agent-evals-model-replay.md) distinguish
+model counterexamples, observed implementation failures, inconclusive replay and
+bounded or unchecked properties, with terminal-state and stateless controls.
+They are manual behavioral probes, not execution by the bundle validator.
+
 ## License
 
 MIT. See [LICENSE](LICENSE). Each skill includes an unchanged copy of this

@@ -1,5 +1,12 @@
 # Select coverage from obligations
 
+## Contents
+
+- [Applicability menu](#applicability-menu)
+- [Choose mechanisms rather than prompt volume](#choose-mechanisms-rather-than-prompt-volume)
+- [Use state models when they expose a missing sequence](#use-state-models-when-they-expose-a-missing-sequence)
+- [Coverage is a bounded argument](#coverage-is-a-bounded-argument)
+
 Start with the user's decision and actual system. Join requirements, architecture
 and observed failures before counting cases. In review mode derive this map before
 accepting the suite's own checklist; otherwise an omitted requirement can disappear
@@ -66,6 +73,24 @@ answer used it correctly; a document-level hit alone may not establish this.
 Substituting a checked intermediate input can help diagnose a failure. Label that
 run as a diagnostic intervention, outside ordinary end-to-end pass rates; one
 successful intervention does not establish a unique cause or a production fix.
+
+## Use state models when they expose a missing sequence
+
+For stateful obligations, a small model or transition table can connect a source
+requirement to an invariant and a short discriminating trace. Keep the relevant
+identity, authority and effect in that trace; label modeled assumptions and
+omitted behavior. This is optional case design, not a requirement to introduce
+formal tools or model a stateless task. Prefer an existing concrete regression
+when it already exposes the mechanism.
+
+For example, if the contract forbids a new publication after acknowledged
+cancellation, trace start → cancellation acknowledged → late completion → proposed
+publication. Check the actual publication record, not merely a final "cancelled"
+message. A model counterexample proposes a regression; replay and qualify it
+using [the evidence distinctions](oracles-and-controls.md#replay-model-counterexamples).
+Do not call a required terminal state a product deadlock solely because a model
+checker expects a successor. Check the actual completion/liveness contract rather
+than adding a transition or weakening an invariant just to make a check pass.
 
 ## Coverage is a bounded argument
 

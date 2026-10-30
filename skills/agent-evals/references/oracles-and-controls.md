@@ -3,6 +3,7 @@
 ## Contents
 
 - [Choose evidence per property](#choose-evidence-per-property)
+- [Replay model counterexamples](#replay-model-counterexamples)
 - [Write discriminating assertions](#write-discriminating-assertions)
 - [Use the smallest decisive control](#use-the-smallest-decisive-control)
 - [Validate judgments and repair affected evidence](#validate-judgments-and-repair-affected-evidence)
@@ -35,6 +36,33 @@ an example is not a universal policy. Use existing evidence for what it proves.
 For premise-only logic check entailment, entailed negation or countermodels under
 the actual semantics, including unstated existence and every proposed example.
 Generalize the verification method instead of relying on familiar domain names.
+
+## Replay model counterexamples
+
+When a model describes an implementation, turn a counterexample into a short
+ordered test or permitted reproduction, mapping each modeled action to the real
+operation and observing the deciding state/effect. Record the requirement,
+implementation and model revisions, initial state, assumptions, replay harness,
+trace and evidence. Use a safe isolated harness where possible; a model finding
+is not authority for real external effects.
+
+Keep these conclusions separate:
+
+| Evidence | Supported conclusion |
+| --- | --- |
+| A trace violates the modeled invariant; no implementation replay | Model violation; implementation behavior unverified |
+| A faithful replay violates the actual contract with observed effects | Reproduced implementation violation within the recorded conditions |
+| Replay lacks the needed schedule, state visibility or faithful dependencies | Inconclusive replay; preserve the suspected mechanism and observation gap |
+| Contract and implementation evidence contradict a specific modeled action or assumption | That counterexample is not established for the implementation; revise the identified mismatch and recheck affected cases |
+| Completed exploration finds no violation of a named checked property | No violation found within the stated model, assumptions and explored bounds; not universal implementation correctness |
+| A property was skipped, exploration capped before its check completed, or execution interrupted | Unchecked or incomplete for that property; neither pass nor failure |
+
+A failed reproduction alone proves neither that the implementation has no bug nor
+that the model is wrong. A deduplicating service can contradict a model that
+allows two effects for the same operation key, but only when the real contract,
+key scope and replay evidence establish that mismatch. One successful schedule
+cannot rule out a different failing interleaving. Report status per property:
+a checked invariant does not cover another property omitted after a cap or error.
 
 ## Write discriminating assertions
 
