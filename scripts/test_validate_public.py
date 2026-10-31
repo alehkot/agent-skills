@@ -627,6 +627,18 @@ class BundleIntegrationTests(unittest.TestCase):
         result = self.validate()
         self.assertEqual(result.returncode, 0, result.stderr)
 
+    def test_behavioral_fixtures_must_be_in_tracked_bundle(self) -> None:
+        for path in sorted(validator.PUBLIC_FILES):
+            if not path.startswith("evals/"):
+                continue
+            with self.subTest(path=path):
+                self.git("rm", "--cached", path)
+                result = self.validate()
+                self.assertNotEqual(result.returncode, 0, result.stdout)
+                self.assertIn("Tracked inventory differs", result.stderr)
+                self.assertIn(path, result.stderr)
+                self.git("add", path)
+
     def test_review_references_must_be_in_tracked_bundle(self) -> None:
         for reference in validator.REFERENCES["review-loop"]:
             with self.subTest(reference=reference):
