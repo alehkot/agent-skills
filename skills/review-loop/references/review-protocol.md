@@ -4,6 +4,7 @@
 
 - [Severity](#severity)
 - [Persistent review log](#persistent-review-log)
+- [Reviewer evidence](#reviewer-evidence)
 - [Fresh reviewer prompt](#fresh-reviewer-prompt)
 - [Result](#result)
 
@@ -39,7 +40,9 @@ Started: <timestamp with timezone, set immediately before first review>
 Deadline: <absolute timestamp, derived once from Started and the time allowance>
 Passes started: 0
 Status: ready | running | PASS | LIMIT_REACHED | BLOCKED | STOPPED
-Reviewer mode: fresh-context | self-review fallback, with reason
+Reviewer mode: observed fresh-context | self-review fallback | unknown, with reason
+Requested reviewer mode: <fresh-context or self-review>
+Reviewer evidence: <observed launch/settings, source access, completion; limits>
 Latest reviewed state: <revision or identifiable artifact state>
 Verification: <check records or optional recipe path; state exercised and evidence>
 
@@ -83,6 +86,37 @@ fresh zero budget. Recover from reliable artifacts or return BLOCKED with the
 missing evidence. If writing is prohibited, keep the same accounting in the
 conversation and disclose it; if reliable accounting cannot be maintained, stop.
 
+## Reviewer evidence
+
+Record what was requested and what the runtime actually exposed separately.
+For a fresh reviewer, retain the available launch identity and context setting,
+its completed result, and evidence of access to the required artifacts. A request
+for fresh context is not proof that the host honored it. A launch with an explicit
+no-history setting supports that boundary, not isolation from shared files,
+configured memory, or project instructions. Do not retrieve unrelated history or
+memory to fill gaps in the artifact, and do not bypass required instructions.
+
+Where native tool records are exposed, check matching successful, nonempty read
+results for the material needed by the review, not just requested paths or the
+reviewer's claim to have read them. A partial result establishes only its visible
+coverage. Failed reads, a wrong revision, and omitted required material cannot
+establish a complete review. A launched or timed-out reviewer is not a completed
+reviewer with no findings.
+
+When native records are unavailable, say which evidence is reviewer-reported and
+which is observed; do not invent traces or equate their absence with a failed
+read. Use the available artifact-grounded findings and the ordinary completeness
+gate. Missing evidence necessary to assess the result blocks PASS; missing host
+metadata alone need not. If fresh context cannot be established, label that mode
+unknown or use the disclosed self-review fallback; never label it independent.
+Self-review must still cover the same scope and evidence within the same budget.
+
+Optional isolation tests belong in controlled runtime evaluations, not every
+review: place a harmless unique marker only in the parent, ask the fresh child
+whether it has that marker without sending its value, and retain the actual child
+result. A missing marker is a narrow observation, not proof against every form of
+context leakage. Such probes do not grant new tools, permissions or review time.
+
 ## Fresh reviewer prompt
 
 Supply real task data in this shape, without importing the author's rationale:
@@ -102,6 +136,7 @@ to the main agent as a proposed check, not an executed result.
 Task and acceptance criteria: <user requirements and accepted decisions>
 Scope and baseline: <all relevant changes/artifacts, not only the last fix>
 Sources and checks: <paths and commands; verify their meaning and current results>
+Optional reconstruction lens: <skill-local reconstruction-review.md, when relevant>
 Code-impact guidance, when applicable: <skill-local blast-radius.md path>
 Verification records, if used: <planned vs executed checks, artifact identity,
 observations, retained evidence, and gaps; not just verdict labels>
@@ -134,7 +169,7 @@ Threshold: <effective severity threshold>
 Budget: <started passes/cap, elapsed time, deadline, and explicit overrides>
 Findings: <open blockers, closed issues with evidence, and lower-severity notes>
 Verification: <actual commands/source checks and outcomes; missing evidence>
-Reviewer mode: <fresh-context or disclosed self-review fallback>
+Reviewer evidence: <requested and observed mode, actual access/completion, limits>
 Review log: <actual path or conversation-only limitation>
 Next: <none for a pass, otherwise concrete restart action and necessary input>
 ```

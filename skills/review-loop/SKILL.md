@@ -52,6 +52,12 @@ or inspection surface, observed outcomes and side effects, and retained evidence
 A short inspection can stay inline in the review log. A recipe is a plan, not
 proof or a new review budget.
 
+For design documents, plans, or handoff prompts whose self-contained meaning
+matters, optionally use [reconstruction-review.md](references/reconstruction-review.md).
+A reviewer first reconstructs the intended behavior from the artifact before
+criticizing it. Use this lens within the existing pass and budget, not for every
+small code change or as an extra approval stage.
+
 ## Review, reconcile, repair
 
 1. Read the log and actual clock. Before starting a pass, check both limits,
@@ -63,6 +69,9 @@ proof or a new review budget.
    it a defense of the implementation. The reviewer must not edit or delegate.
    If unavailable, perform an explicit self-review and disclose the fallback.
    Do not call an external model/provider without applicable authorization.
+   Record requested reviewer mode separately from observed launch, access and
+   completion evidence, following the review protocol. Do not infer isolation
+   or successful source reads from the reviewer label or a requested tool call.
 3. Review the whole scope using artifact-appropriate concerns: requirements,
    correctness, source grounding, reasoning, completeness, audience and purpose,
    and relevant failure paths or regressions. When readability or layout matters,

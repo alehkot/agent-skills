@@ -139,6 +139,18 @@ works. Documents, slides, and other knowledge work can use direct inspection,
 source checks, and rendered-output checks where relevant. The recipe includes
 memo and slide-deck examples; simple checks need no separate recipe file.
 
+For designs, plans and handoff prompts, an optional
+[reconstruction lens](skills/review-loop/references/reconstruction-review.md)
+asks the reviewer to explain the proposed behavior and its current-state
+assumptions before criticizing it. This tests whether the artifact communicates
+its meaning without the author's private explanation. It is not mandatory for
+small code changes and adds no passes or approval stages.
+
+The review log separates requested reviewer mode from observed launch, source
+access and completion evidence. Fresh conversation context does not imply an
+isolated filesystem or memory. Unavailable native traces are disclosed, not
+invented; a failed required read or incomplete review cannot count as clean.
+
 Every reviewer attempt, including failures and the final clean pass, counts.
 A fix after pass ten cannot pass without an authorized extra review. At either
 limit the skill reports **not passed**, preserves the log and restart action,
@@ -276,6 +288,11 @@ review-budget boundaries. These are manual behavioral fixtures too.
 model counterexamples, observed implementation failures, inconclusive replay and
 bounded or unchecked properties, with terminal-state and stateless controls.
 They are manual behavioral probes, not execution by the bundle validator.
+
+[Review reconstruction and evidence cases](evals/review-loop-reconstruction.md)
+cover ambiguous and clean artifacts, reviewer mistakes, access failures, context
+claims and unchanged budget boundaries. They are manual behavioral fixtures;
+structural validation alone does not demonstrate better reviews.
 
 ## License
 
