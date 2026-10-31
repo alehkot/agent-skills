@@ -47,3 +47,12 @@
 !/skills/review-loop/references/blast-radius.md
 
 !/skills/review-loop/references/reconstruction-review.md
+
+# Woodpecker build logs and test artifacts
+/.ci-output/
+
+# Explicitly distributed CI configuration and helpers
+!/.woodpecker.yaml
+!/.ci/
+/.ci/*
+!/.ci/check.sh
