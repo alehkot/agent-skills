@@ -162,7 +162,7 @@ REFERENCES = {
     "review-loop": ("blast-radius.md", "review-protocol.md", "verification-recipe.md"),
 }
 PUBLIC_FILES = frozenset({
-    ".woodpecker.yaml", ".ci/check.sh", ".ci/report.py", ".ci/test_report.py",
+    ".woodpecker.yaml", ".ci/check.sh",
     ".gitignore", ".github/workflows/validate.yml", "LICENSE", "README.md",
     "scripts/validate_public.py", "scripts/test_validate_public.py",
     "evals/handoff-recovery.md", "evals/challenge-me-limits.md",
