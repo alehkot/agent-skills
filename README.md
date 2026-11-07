@@ -282,7 +282,8 @@ fixtures, not automated checks of agent behavior.
 
 [Review-loop blast-radius cases](evals/review-loop-blast-radius.md) cover downstream
 contracts, evidence limits, read-only reviewers, clean changes, and existing
-review-budget boundaries. These are manual behavioral fixtures too.
+review-budget boundaries. These self-contained manual decision probes include
+synthetic source and prior-run evidence; they do not measure tool execution.
 
 [Agent-evals model replay cases](evals/agent-evals-model-replay.md) distinguish
 model counterexamples, observed implementation failures, inconclusive replay and
