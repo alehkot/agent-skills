@@ -36,6 +36,11 @@ plausible answer. A user stop or an exhausted allowance with unresolved branches
 produces a partial brief with open questions; a clear result requires the material
 branches to be resolved.
 
+When a preference is hard to describe, optional
+[concrete alternatives](skills/challenge-me/references/concrete-alternatives.md)
+contrast small examples without committing to a design. Preferences remain
+separate from facts, and examples do not extend the interview allowance.
+
 An explicit output path wins. In a file-based knowledge base, the skill follows
 an established scratch-note or decision-log convention. Otherwise it uses a
 unique OS temporary directory, such as `/tmp`. Ordinary repositories do not get
@@ -145,6 +150,13 @@ asks the reviewer to explain the proposed behavior and its current-state
 assumptions before criticizing it. This tests whether the artifact communicates
 its meaning without the author's private explanation. It is not mandatory for
 small code changes and adds no passes or approval stages.
+
+For changes that introduce material choices, an optional
+[decision provenance lens](skills/review-loop/references/decision-provenance.md)
+checks where those choices came from, what behavior they constrain, and whether
+they are justified and within the task's authority. It preserves ordinary
+delegated discretion while surfacing unresolved consequential decisions. It
+adds no mandatory ledger file and does not replace review of the complete change.
 
 The review log separates requested reviewer mode from observed launch, source
 access and completion evidence. Fresh conversation context does not imply an
@@ -294,6 +306,13 @@ They are manual behavioral probes, not execution by the bundle validator.
 cover ambiguous and clean artifacts, reviewer mistakes, access failures, context
 claims and unchanged budget boundaries. They are manual behavioral fixtures;
 structural validation alone does not demonstrate better reviews.
+
+[Decision provenance cases](evals/review-loop-decisions.md) distinguish hidden
+policy choices, delegated discretion, technical defects, changed evidence and
+clean work. [Concrete-alternative cases](evals/challenge-me-alternatives.md)
+cover preference contrasts, factual unknowns, fair comparisons and interview
+limits. These are manual reasoning fixtures, not model-performance measurements;
+the automated checks validate their packaging and reference links only.
 
 ## License
 

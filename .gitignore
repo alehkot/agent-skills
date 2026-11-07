@@ -56,3 +56,8 @@
 !/.ci/
 /.ci/*
 !/.ci/check.sh
+
+!/skills/review-loop/references/decision-provenance.md
+!/skills/challenge-me/references/concrete-alternatives.md
+!/evals/review-loop-decisions.md
+!/evals/challenge-me-alternatives.md

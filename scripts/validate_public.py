@@ -156,10 +156,10 @@ REFERENCES = {
         "agent-boundaries.md", "coverage.md", "experiments.md",
         "oracles-and-controls.md", "rubric.md",
     ),
-    "challenge-me": ("decision-log.md",),
+    "challenge-me": ("concrete-alternatives.md", "decision-log.md",),
     "handoff": ("prompt-template.md",),
     "make-it-click": ("learning-patterns.md",),
-    "review-loop": ("blast-radius.md", "reconstruction-review.md", "review-protocol.md", "verification-recipe.md"),
+    "review-loop": ("blast-radius.md", "decision-provenance.md", "reconstruction-review.md", "review-protocol.md", "verification-recipe.md"),
 }
 PUBLIC_FILES = frozenset({
     ".woodpecker.yaml", ".ci/check.sh",
@@ -168,6 +168,7 @@ PUBLIC_FILES = frozenset({
     "evals/handoff-recovery.md", "evals/challenge-me-limits.md",
     "evals/review-loop-blast-radius.md", "evals/agent-evals-model-replay.md",
     "evals/review-loop-reconstruction.md",
+    "evals/review-loop-decisions.md", "evals/challenge-me-alternatives.md",
 } | {
     f"skills/{name}/{path}"
     for name, references in REFERENCES.items()

@@ -639,31 +639,34 @@ class BundleIntegrationTests(unittest.TestCase):
                 self.assertIn(path, result.stderr)
                 self.git("add", path)
 
-    def test_review_references_must_be_in_tracked_bundle(self) -> None:
-        for reference in validator.REFERENCES["review-loop"]:
-            with self.subTest(reference=reference):
-                path = f"skills/review-loop/references/{reference}"
-                self.git("rm", "--cached", path)
-                result = self.validate()
-                self.assertNotEqual(result.returncode, 0, result.stdout)
-                self.assertIn("Tracked inventory differs", result.stderr)
-                self.assertIn(path, result.stderr)
-                self.git("add", path)
+    def test_skill_references_must_be_in_tracked_bundle(self) -> None:
+        for name, references in validator.REFERENCES.items():
+            for reference in references:
+                with self.subTest(skill=name, reference=reference):
+                    path = f"skills/{name}/references/{reference}"
+                    self.git("rm", "--cached", path)
+                    result = self.validate()
+                    self.assertNotEqual(result.returncode, 0, result.stdout)
+                    self.assertIn("Tracked inventory differs", result.stderr)
+                    self.assertIn(path, result.stderr)
+                    self.git("add", path)
 
-    def test_review_references_require_direct_entrypoint_link(self) -> None:
-        path = self.root / "skills/review-loop/SKILL.md"
-        original = path.read_text(encoding="utf-8")
-        for reference in validator.REFERENCES["review-loop"]:
-            with self.subTest(reference=reference):
-                path.write_text(
-                    original.replace(
-                        f"[{reference}](references/{reference})", reference,
-                    ),
-                    encoding="utf-8",
-                )
-                result = self.validate()
-                self.assertNotEqual(result.returncode, 0, result.stdout)
-                self.assertIn("never linked directly", result.stderr)
+    def test_skill_references_require_direct_entrypoint_link(self) -> None:
+        for name, references in validator.REFERENCES.items():
+            path = self.root / "skills" / name / "SKILL.md"
+            original = path.read_text(encoding="utf-8")
+            for reference in references:
+                with self.subTest(skill=name, reference=reference):
+                    path.write_text(
+                        original.replace(
+                            f"[{reference}](references/{reference})", reference,
+                        ),
+                        encoding="utf-8",
+                    )
+                    result = self.validate()
+                    self.assertNotEqual(result.returncode, 0, result.stdout)
+                    self.assertIn("never linked directly", result.stderr)
+            path.write_text(original, encoding="utf-8")
 
     def test_titled_untracked_runtime_reference_fails(self) -> None:
         extra = self.root / "skills/handoff/references/extra.md"
