@@ -540,7 +540,7 @@ class BundleIntegrationTests(unittest.TestCase):
     def test_clean_checkout_passes(self) -> None:
         result = self.validate()
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("Validated 5 skills", result.stdout)
+        self.assertIn(f"Validated {len(validator.REFERENCES)} skills", result.stdout)
 
     def replace_frontmatter(self, header: str) -> None:
         path = self.root / "skills/handoff/SKILL.md"

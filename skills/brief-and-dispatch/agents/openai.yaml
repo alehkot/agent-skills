@@ -1,0 +1,4 @@
+interface:
+  display_name: "Brief and Dispatch"
+  short_description: "Bounded execution briefs with checks and clear ownership"
+  default_prompt: "Use $brief-and-dispatch to prepare a concise execution brief with a verifiable outcome, boundaries, and ownership for this task."

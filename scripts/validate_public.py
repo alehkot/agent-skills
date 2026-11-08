@@ -152,6 +152,7 @@ def validate_reference_resources(skill_dir: Path) -> None:
 
 ROOT = Path(__file__).resolve().parents[1]
 REFERENCES = {
+    "brief-and-dispatch": (),
     "agent-evals": (
         "agent-boundaries.md", "coverage.md", "experiments.md",
         "oracles-and-controls.md", "rubric.md",
@@ -165,7 +166,7 @@ PUBLIC_FILES = frozenset({
     ".woodpecker.yaml", ".ci/check.sh",
     ".gitignore", ".github/workflows/validate.yml", "LICENSE", "README.md",
     "scripts/validate_public.py", "scripts/test_validate_public.py",
-    "evals/handoff-recovery.md", "evals/challenge-me-limits.md",
+    "evals/brief-and-dispatch.md", "evals/handoff-recovery.md", "evals/challenge-me-limits.md",
     "evals/review-loop-blast-radius.md", "evals/agent-evals-model-replay.md",
     "evals/review-loop-reconstruction.md",
     "evals/review-loop-decisions.md", "evals/challenge-me-alternatives.md",

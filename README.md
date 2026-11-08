@@ -1,6 +1,6 @@
 # Agent Skills
 
-Skills for challenging ideas, explaining unfamiliar subjects, handing off
+Skills for briefing and delegating work, challenging ideas, explaining unfamiliar subjects, handing off
 execution, reviewing completed work, and designing or auditing AI-agent
 evaluations. Each skill works alone in Codex, Claude, or another agent that
 reads Agent Skills.
@@ -9,6 +9,7 @@ reads Agent Skills.
 
 | Skill | Use for |
 | --- | --- |
+| `brief-and-dispatch` | A bounded initial execution brief with observable completion, verification, and non-overlapping ownership; dispatch only when requested. |
 | `challenge-me` | Persistent hard questions that expose assumptions and resolve ambiguities, with a working Markdown decision log. |
 | `make-it-click` | Explanations of code, documents, systems, and concepts, with concrete examples, relevant evidence, and optional practice. |
 | `handoff` | A paste-ready execution prompt for a fresh agent, preserving compacted context, pitfalls, verification, and the restart point. |
@@ -17,6 +18,21 @@ reads Agent Skills.
 
 Use each skill independently. All required instructions and reference files are
 included in its directory.
+
+## Brief a task before delegating
+
+```text
+Use $brief-and-dispatch to plan the dashboard speed investigation. Inspect the
+existing benchmark first. Return a brief only: what would establish a useful
+improvement, the smallest justified slice, checks, boundaries, and ownership.
+```
+
+The skill distinguishes initial assignments from `handoff` continuation prompts,
+and reuses `review-loop` when available rather than duplicating its review process.
+A plan does not launch workers or authorize publication.
+[Behavioral probes](evals/brief-and-dispatch.md) cover discovery, shared interfaces,
+verification gaps, no-change outcomes, and proportional handling of simple tasks.
+They require separate model runs; the bundle validator does not execute them.
 
 ## Challenge an idea
 
