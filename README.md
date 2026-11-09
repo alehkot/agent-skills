@@ -333,5 +333,5 @@ the automated checks validate their packaging and reference links only.
 ## License
 
 MIT. See [LICENSE](LICENSE). Each skill includes an unchanged copy of this
-license for standalone distribution. Keep all five copies synchronized when
+license for standalone distribution. Keep every skill's copy synchronized when
 updating the repository license.
