@@ -63,6 +63,11 @@ If progress stalls, change the framing or seek evidence rather than repeating
 the same question. When the user is unavailable, leave unanswered decisions
 open and await input; silence is not a decision.
 
+When an abstract preference remains unclear, optionally use
+[concrete-alternatives.md](references/concrete-alternatives.md): contrast two
+small examples and ask what makes one useful. Keep facts, hypothetical examples
+and confirmed preferences distinct; use the existing round and interview limit.
+
 ## Keep the decision log current
 
 Read [decision-log.md](references/decision-log.md) for location selection, the

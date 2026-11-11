@@ -58,6 +58,12 @@ A reviewer first reconstructs the intended behavior from the artifact before
 criticizing it. Use this lens within the existing pass and budget, not for every
 small code change or as an extra approval stage.
 
+When the change fills material gaps in the request, optionally use
+[decision-provenance.md](references/decision-provenance.md) to distinguish
+requirements, delegated choices, existing behavior and unresolved decisions.
+Check technical merit separately from permission within the same review pass;
+a ledger cannot replace diff review or authorize a consequential choice.
+
 ## Review, reconcile, repair
 
 1. Read the log and actual clock. Before starting a pass, check both limits,

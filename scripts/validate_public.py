@@ -12,6 +12,20 @@ from pathlib import Path, PurePosixPath
 from urllib.parse import unquote, urlsplit
 
 
+def markdown_body(path: Path, text: str) -> str:
+    """Mask SKILL.md metadata without changing Markdown source line numbers.
+
+    The metadata parser validates the header separately. Only skill entrypoints
+    have frontmatter in this bundle; ordinary Markdown may start with a rule.
+    """
+    if path.name != "SKILL.md":
+        return text
+    lines = text.split("\n")
+    if lines[0] != "---" or "---" not in lines[1:]:
+        return text
+    end = lines.index("---", 1) + 1
+    return "\n" * end + "\n".join(lines[end:])
+
 
 def unfenced_lines(text: str) -> list[tuple[int, str]]:
     """Return numbered Markdown lines outside backtick and tilde fences."""
@@ -139,7 +153,8 @@ def validate_reference_resources(skill_dir: Path) -> None:
             raise ValueError(f"{path}: references must stay one level deep")
     linked: set[Path] = set()
     for path in [skill_md, *paths]:
-        for target in markdown_links(path.read_text(encoding="utf-8")):
+        text = markdown_body(path, path.read_text(encoding="utf-8"))
+        for target in markdown_links(text):
             resolved = validate_local_link(path, target, root)
             if path == skill_md and resolved is not None:
                 linked.add(resolved)
@@ -152,22 +167,24 @@ def validate_reference_resources(skill_dir: Path) -> None:
 
 ROOT = Path(__file__).resolve().parents[1]
 REFERENCES = {
+    "brief-and-dispatch": (),
     "agent-evals": (
         "agent-boundaries.md", "coverage.md", "experiments.md",
         "oracles-and-controls.md", "rubric.md",
     ),
-    "challenge-me": ("decision-log.md",),
+    "challenge-me": ("concrete-alternatives.md", "decision-log.md",),
     "handoff": ("prompt-template.md",),
     "make-it-click": ("learning-patterns.md",),
-    "review-loop": ("blast-radius.md", "reconstruction-review.md", "review-protocol.md", "verification-recipe.md"),
+    "review-loop": ("blast-radius.md", "decision-provenance.md", "reconstruction-review.md", "review-protocol.md", "verification-recipe.md"),
 }
 PUBLIC_FILES = frozenset({
     ".woodpecker.yaml", ".ci/check.sh",
     ".gitignore", ".github/workflows/validate.yml", "LICENSE", "README.md",
     "scripts/validate_public.py", "scripts/test_validate_public.py",
-    "evals/handoff-recovery.md", "evals/challenge-me-limits.md",
+    "evals/brief-and-dispatch.md", "evals/handoff-recovery.md", "evals/challenge-me-limits.md",
     "evals/review-loop-blast-radius.md", "evals/agent-evals-model-replay.md",
     "evals/review-loop-reconstruction.md",
+    "evals/review-loop-decisions.md", "evals/challenge-me-alternatives.md",
 } | {
     f"skills/{name}/{path}"
     for name, references in REFERENCES.items()
@@ -358,8 +375,9 @@ def validate_local_link(path: Path, target: str, boundary: Path) -> Path | None:
     if not resolved.is_file():
         raise ValueError(f"{path}: broken local link {target!r}")
     if parts.fragment and resolved.suffix == ".md":
+        text = markdown_body(resolved, resolved.read_text(encoding="utf-8"))
         anchors = {
-            h[3] for h in markdown_headings(resolved.read_text(encoding="utf-8"))
+            h[3] for h in markdown_headings(text)
         }
         if unquote(parts.fragment) not in anchors:
             raise ValueError(f"{path}: incorrect anchor in {target!r}")
@@ -371,7 +389,7 @@ def check_links(name: str, text: str) -> None:
     boundary = (
         ROOT / "skills" / components[1] if components[0] == "skills" else ROOT
     )
-    for target in markdown_links(text):
+    for target in markdown_links(markdown_body(ROOT / name, text)):
         validate_local_link(ROOT / name, target, boundary)
 
 

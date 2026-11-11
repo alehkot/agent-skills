@@ -1,6 +1,6 @@
 # Agent Skills
 
-Skills for challenging ideas, explaining unfamiliar subjects, handing off
+Skills for briefing and delegating work, challenging ideas, explaining unfamiliar subjects, handing off
 execution, reviewing completed work, and designing or auditing AI-agent
 evaluations. Each skill works alone in Codex, Claude, or another agent that
 reads Agent Skills.
@@ -9,6 +9,7 @@ reads Agent Skills.
 
 | Skill | Use for |
 | --- | --- |
+| `brief-and-dispatch` | A bounded initial execution brief with observable completion, verification, and non-overlapping ownership; dispatch only when requested. |
 | `challenge-me` | Persistent hard questions that expose assumptions and resolve ambiguities, with a working Markdown decision log. |
 | `make-it-click` | Explanations of code, documents, systems, and concepts, with concrete examples, relevant evidence, and optional practice. |
 | `handoff` | A paste-ready execution prompt for a fresh agent, preserving compacted context, pitfalls, verification, and the restart point. |
@@ -17,6 +18,21 @@ reads Agent Skills.
 
 Use each skill independently. All required instructions and reference files are
 included in its directory.
+
+## Brief a task before delegating
+
+```text
+Use $brief-and-dispatch to plan the dashboard speed investigation. Inspect the
+existing benchmark first. Return a brief only: what would establish a useful
+improvement, the smallest justified slice, checks, boundaries, and ownership.
+```
+
+The skill distinguishes initial assignments from `handoff` continuation prompts,
+and reuses `review-loop` when available rather than duplicating its review process.
+A plan does not launch workers or authorize publication.
+[Behavioral probes](evals/brief-and-dispatch.md) cover discovery, shared interfaces,
+verification gaps, no-change outcomes, and proportional handling of simple tasks.
+They require separate model runs; the bundle validator does not execute them.
 
 ## Challenge an idea
 
@@ -35,6 +51,11 @@ implications and revisits contradictions instead of stopping at the first
 plausible answer. A user stop or an exhausted allowance with unresolved branches
 produces a partial brief with open questions; a clear result requires the material
 branches to be resolved.
+
+When a preference is hard to describe, optional
+[concrete alternatives](skills/challenge-me/references/concrete-alternatives.md)
+contrast small examples without committing to a design. Preferences remain
+separate from facts, and examples do not extend the interview allowance.
 
 An explicit output path wins. In a file-based knowledge base, the skill follows
 an established scratch-note or decision-log convention. Otherwise it uses a
@@ -146,6 +167,13 @@ assumptions before criticizing it. This tests whether the artifact communicates
 its meaning without the author's private explanation. It is not mandatory for
 small code changes and adds no passes or approval stages.
 
+For changes that introduce material choices, an optional
+[decision provenance lens](skills/review-loop/references/decision-provenance.md)
+checks where those choices came from, what behavior they constrain, and whether
+they are justified and within the task's authority. It preserves ordinary
+delegated discretion while surfacing unresolved consequential decisions. It
+adds no mandatory ledger file and does not replace review of the complete change.
+
 The review log separates requested reviewer mode from observed launch, source
 access and completion evidence. Fresh conversation context does not imply an
 isolated filesystem or memory. Unavailable native traces are disclosed, not
@@ -236,7 +264,9 @@ python3 scripts/test_validate_public.py
 It checks the tracked file inventory, skill metadata, and bundled inline Markdown
 links, including quoted link titles and ATX-heading fragments. Local destinations
 must be tracked bundle files; links within a skill must stay in that standalone
-skill. Fenced examples and same-line code spans are not treated as live links.
+skill. SKILL.md frontmatter is metadata, not Markdown: its text cannot supply
+body links or heading anchors. Fenced examples and same-line code spans are not
+treated as live links.
 The checker handles the bundle's Markdown conventions, not all CommonMark syntax
 (such as reference-style links, HTML links, or Setext headings). The regression
 tests run with the same standard-library-only requirements.
@@ -282,7 +312,8 @@ fixtures, not automated checks of agent behavior.
 
 [Review-loop blast-radius cases](evals/review-loop-blast-radius.md) cover downstream
 contracts, evidence limits, read-only reviewers, clean changes, and existing
-review-budget boundaries. These are manual behavioral fixtures too.
+review-budget boundaries. These self-contained manual decision probes include
+synthetic source and prior-run evidence; they do not measure tool execution.
 
 [Agent-evals model replay cases](evals/agent-evals-model-replay.md) distinguish
 model counterexamples, observed implementation failures, inconclusive replay and
@@ -294,8 +325,15 @@ cover ambiguous and clean artifacts, reviewer mistakes, access failures, context
 claims and unchanged budget boundaries. They are manual behavioral fixtures;
 structural validation alone does not demonstrate better reviews.
 
+[Decision provenance cases](evals/review-loop-decisions.md) distinguish hidden
+policy choices, delegated discretion, technical defects, changed evidence and
+clean work. [Concrete-alternative cases](evals/challenge-me-alternatives.md)
+cover preference contrasts, factual unknowns, fair comparisons and interview
+limits. These are manual reasoning fixtures, not model-performance measurements;
+the automated checks validate their packaging and reference links only.
+
 ## License
 
 MIT. See [LICENSE](LICENSE). Each skill includes an unchanged copy of this
-license for standalone distribution. Keep all five copies synchronized when
+license for standalone distribution. Keep every skill's copy synchronized when
 updating the repository license.
