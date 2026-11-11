@@ -12,6 +12,20 @@ from pathlib import Path, PurePosixPath
 from urllib.parse import unquote, urlsplit
 
 
+def markdown_body(path: Path, text: str) -> str:
+    """Mask SKILL.md metadata without changing Markdown source line numbers.
+
+    The metadata parser validates the header separately. Only skill entrypoints
+    have frontmatter in this bundle; ordinary Markdown may start with a rule.
+    """
+    if path.name != "SKILL.md":
+        return text
+    lines = text.split("\n")
+    if lines[0] != "---" or "---" not in lines[1:]:
+        return text
+    end = lines.index("---", 1) + 1
+    return "\n" * end + "\n".join(lines[end:])
+
 
 def unfenced_lines(text: str) -> list[tuple[int, str]]:
     """Return numbered Markdown lines outside backtick and tilde fences."""
@@ -139,7 +153,8 @@ def validate_reference_resources(skill_dir: Path) -> None:
             raise ValueError(f"{path}: references must stay one level deep")
     linked: set[Path] = set()
     for path in [skill_md, *paths]:
-        for target in markdown_links(path.read_text(encoding="utf-8")):
+        text = markdown_body(path, path.read_text(encoding="utf-8"))
+        for target in markdown_links(text):
             resolved = validate_local_link(path, target, root)
             if path == skill_md and resolved is not None:
                 linked.add(resolved)
@@ -360,8 +375,9 @@ def validate_local_link(path: Path, target: str, boundary: Path) -> Path | None:
     if not resolved.is_file():
         raise ValueError(f"{path}: broken local link {target!r}")
     if parts.fragment and resolved.suffix == ".md":
+        text = markdown_body(resolved, resolved.read_text(encoding="utf-8"))
         anchors = {
-            h[3] for h in markdown_headings(resolved.read_text(encoding="utf-8"))
+            h[3] for h in markdown_headings(text)
         }
         if unquote(parts.fragment) not in anchors:
             raise ValueError(f"{path}: incorrect anchor in {target!r}")
@@ -373,7 +389,7 @@ def check_links(name: str, text: str) -> None:
     boundary = (
         ROOT / "skills" / components[1] if components[0] == "skills" else ROOT
     )
-    for target in markdown_links(text):
+    for target in markdown_links(markdown_body(ROOT / name, text)):
         validate_local_link(ROOT / name, target, boundary)
 
 

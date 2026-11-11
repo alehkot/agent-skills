@@ -209,6 +209,107 @@ class LinkValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "not in the bundle"):
             validator.validate_reference_resources(self.root / "skills/example")
 
+    def skill_with_metadata(self, body: str, comments: str = "") -> str:
+        text = (
+            '---\nname: example\ndescription: "Explain a concrete example."\n'
+            + comments + '---\n' + body
+        )
+        validator.parse_skill_frontmatter("example", text)
+        (self.root / self.skill).write_text(text, encoding="utf-8")
+        return text
+
+    def test_frontmatter_link_is_not_a_direct_reference(self) -> None:
+        text = self.skill_with_metadata(
+            '# Example\n[Space](<references/with space.md>)\n',
+            '# [Guide](references/guide.md)\n',
+        )
+        validator.check_links(self.skill, text)
+        with self.assertRaisesRegex(ValueError, "never linked directly"):
+            validator.validate_reference_resources(self.root / "skills/example")
+
+    def test_frontmatter_links_are_not_live_markdown(self) -> None:
+        body = self.files[self.skill]
+        for metadata in (
+            '# [Unused](missing.md)\n',
+            '# [Outside](../../README.md)\n',
+        ):
+            with self.subTest(metadata=metadata):
+                text = self.skill_with_metadata(body, metadata)
+                validator.check_links(self.skill, text)
+                validator.validate_reference_resources(self.root / "skills/example")
+        text = self.skill_with_metadata(body).replace(
+            '"Explain a concrete example."',
+            '"> Use [metadata](missing.md), not a Markdown body link."',
+        )
+        validator.parse_skill_frontmatter("example", text)
+        (self.root / self.skill).write_text(text, encoding="utf-8")
+        validator.check_links(self.skill, text)
+        validator.validate_reference_resources(self.root / "skills/example")
+
+    def test_frontmatter_fence_cannot_hide_body_links(self) -> None:
+        text = self.skill_with_metadata(self.files[self.skill]).replace(
+            'description: "Explain a concrete example."',
+            'description: >-\n  ```markdown',
+        )
+        validator.parse_skill_frontmatter("example", text)
+        (self.root / self.skill).write_text(text, encoding="utf-8")
+        validator.validate_reference_resources(self.root / "skills/example")
+        with self.assertRaisesRegex(ValueError, "not in the bundle"):
+            validator.check_links(self.skill, text + "[Bad](missing.md)\n")
+
+    def test_frontmatter_mask_preserves_body_line_numbers(self) -> None:
+        text = self.skill_with_metadata('# Example\n## Details\n', '# Comment\n')
+        body = validator.markdown_body(self.root / self.skill, text)
+        self.assertEqual(len(body.splitlines()), len(text.splitlines()))
+        self.assertEqual(
+            [(number, title) for number, _, title, _ in validator.markdown_headings(body)],
+            [(6, "Example"), (7, "Details")],
+        )
+
+    def test_frontmatter_mask_does_not_repair_missing_delimiters(self) -> None:
+        for text in (
+            '# Example\n',
+            '---\nname: example\n# Still inside an unclosed header\n',
+            '',
+        ):
+            with self.subTest(text=text):
+                self.assertEqual(validator.markdown_body(Path(self.skill), text), text)
+                with self.assertRaisesRegex(ValueError, "missing YAML frontmatter"):
+                    validator.parse_skill_frontmatter("example", text)
+
+    def test_frontmatter_comment_cannot_supply_a_fragment(self) -> None:
+        self.skill_with_metadata('# Example\n', '# Hidden section\n')
+        for source, target in (
+            (self.skill, "#hidden-section"),
+            ("README.md", "skills/example/SKILL.md#hidden-section"),
+        ):
+            with self.subTest(source=source):
+                with self.assertRaisesRegex(ValueError, "incorrect anchor"):
+                    validator.check_links(source, f"[Jump]({target})")
+
+    def test_frontmatter_heading_does_not_change_body_anchor_numbering(self) -> None:
+        self.skill_with_metadata(
+            '# Example\n## Details\n## Details\n', '# Details\n'
+        )
+        for fragment in ("example", "details", "details-1"):
+            validator.check_links(self.skill, f"[Jump](#{fragment})")
+        with self.assertRaisesRegex(ValueError, "incorrect anchor"):
+            validator.check_links(self.skill, "[Jump](#details-2)")
+
+    def test_body_links_remain_live_after_frontmatter(self) -> None:
+        for destination in ("missing.md", "../../README.md", "#missing"):
+            with self.subTest(destination=destination):
+                text = self.skill_with_metadata(f"# Example\n[Bad]({destination})\n")
+                with self.assertRaises(ValueError):
+                    validator.check_links(self.skill, text)
+
+    def test_readme_horizontal_rules_do_not_hide_markdown(self) -> None:
+        text = '---\n# Visible\n[Broken](missing.md)\n---\n'
+        (self.root / "README.md").write_text(text, encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "not in the bundle"):
+            validator.check_links("README.md", text)
+        validator.check_links("README.md", "[Jump](#visible)")
+
     def test_code_example_does_not_count_as_direct_reference(self) -> None:
         (self.root / self.skill).write_text(
             '# Example\n`[Guide](references/guide.md)`\n'
