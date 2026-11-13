@@ -58,8 +58,9 @@ contrast small examples without committing to a design. Preferences remain
 separate from facts, and examples do not extend the interview allowance.
 
 An explicit output path wins. In a file-based knowledge base, the skill follows
-an established scratch-note or decision-log convention. Otherwise it uses a
-unique OS temporary directory, such as `/tmp`. Ordinary repositories do not get
+an established scratch-note or decision-log convention. Otherwise it creates a
+unique directory with the OS temporary-directory facility, such as `mktemp -d`,
+and keeps the log there as `decisions.md`. Ordinary repositories do not get
 permanent scratch documentation by default. If writes are unavailable, the
 conversation holds the log and the persistence limitation is disclosed.
 
