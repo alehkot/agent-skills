@@ -174,7 +174,6 @@ REFERENCES = {
     ),
     "challenge-me": ("concrete-alternatives.md", "decision-log.md",),
     "handoff": ("prompt-template.md",),
-    "make-it-click": ("learning-patterns.md",),
     "review-loop": ("blast-radius.md", "decision-provenance.md", "reconstruction-review.md", "review-protocol.md", "verification-recipe.md"),
 }
 PUBLIC_FILES = frozenset({
