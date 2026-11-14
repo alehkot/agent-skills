@@ -37,6 +37,13 @@ competing interpretations and effect on the intended reader or execution.
 Defined terms alone do not establish a coherent explanation. Conversely, a
 paraphrase that differs in wording but preserves the contract is not a defect.
 
+Report a gap only when the intended reader, taking the text in its natural
+sense, would break an accepted requirement or must guess a choice that
+requirement depends on. A failure that needs a strained reading, or an
+implementation the artifact does not describe, is not a finding. Detail outside
+the stated review scope is not owed. A reconstruction that satisfies the
+contract with no finding is a complete review result.
+
 A mistaken reconstruction may reflect a reviewer error, inaccessible evidence,
 or a genuine artifact gap. Establish which before editing; do not automatically
 rewrite a correct artifact to match a mistaken reviewer. Relevance and severity

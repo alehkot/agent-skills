@@ -48,6 +48,9 @@ choice is genuinely unresolved, explain the alternatives and recommendation;
 leave the dependent work blocked until the required decision is obtained. A
 reversible proposal, silence, or a recorded recommendation is not approval.
 Continue independent authorized work without silently choosing that policy.
+An open decision blocks only what depends on it. In the result, name the
+dependent part and report the rest of the change on its own merits; do not hold
+or reject the whole change for one unresolved choice.
 
 Use the normal review gate for defects and missing required evidence. The lens
 is read-only for a reviewer: record the finding, then let the main agent reconcile

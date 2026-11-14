@@ -89,7 +89,11 @@ a ledger cannot replace diff review or authorize a consequential choice.
    false positives, and unresolved claims separately. Maintain stable finding
    IDs so a repeated unresolved issue cannot disappear as "nothing new." If the
    reviewer relied on incomplete or incorrect task context, correct the brief
-   and reassess the finding before changing the artifact.
+   and reassess the finding before changing the artifact. A finding disproved
+   this way is a demonstrated false positive, but the pass that used the wrong
+   context did not review the scope: PASS still needs a full-scope review under
+   the corrected brief. Reconciliation is not a review pass; recorded passes
+   and elapsed time stay as they are.
 5. Fix confirmed findings at or above the threshold within the authorized
    scope, then run appropriate verification. Report lower-severity suggestions
    without default polishing loops. New product decisions or external actions
@@ -137,5 +141,5 @@ verification evidence, reviewer mode, log path, and next action. Calculate elaps
 time from the recorded start to the current or reported completion time, including
 overruns; report it separately from the allowed duration. Even in a short result,
 retain supplied remaining time separately from an exhausted pass count.
-A pass states the review's scope and limitations; it is not a claim that no
-defects can exist.
+A pass states the review's scope and, for each cited check, what it exercised
+and what it left unexercised. It is not a claim that no defect or risk remains.

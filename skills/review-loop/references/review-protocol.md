@@ -168,7 +168,7 @@ Scope: <task and actual final artifact state covered>
 Threshold: <effective severity threshold>
 Budget: <started passes/cap, elapsed time, deadline, and explicit overrides>
 Findings: <open blockers, closed issues with evidence, and lower-severity notes>
-Verification: <actual commands/source checks and outcomes; missing evidence>
+Verification: <actual commands/source checks, outcomes and what each covered; missing evidence>
 Reviewer evidence: <requested and observed mode, actual access/completion, limits>
 Review log: <actual path or conversation-only limitation>
 Next: <none for a pass, otherwise concrete restart action and necessary input>
