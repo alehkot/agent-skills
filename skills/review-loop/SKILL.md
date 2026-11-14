@@ -90,10 +90,11 @@ a ledger cannot replace diff review or authorize a consequential choice.
    IDs so a repeated unresolved issue cannot disappear as "nothing new." If the
    reviewer relied on incomplete or incorrect task context, correct the brief
    and reassess the finding before changing the artifact. A finding disproved
-   this way is a demonstrated false positive, but the pass that used the wrong
-   context did not review the scope: PASS still needs a full-scope review under
-   the corrected brief. Reconciliation is not a review pass; recorded passes
-   and elapsed time stay as they are.
+   this way is a demonstrated false positive. The rest of that pass rests on
+   the same context, so reassess the whole scope under the corrected brief in
+   the next counted pass before PASS; a corrected brief is not a blocker.
+   Reconciliation is not a review pass; recorded passes and elapsed time stay
+   as they are.
 5. Fix confirmed findings at or above the threshold within the authorized
    scope, then run appropriate verification. Report lower-severity suggestions
    without default polishing loops. New product decisions or external actions
